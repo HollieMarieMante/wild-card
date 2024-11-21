@@ -6,36 +6,35 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
-@Table(name = "user")
+@Table(name = "cart")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
-
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private int cartId;
 
     @Column(nullable = false)
-    private String name;
+    private String productName;
 
     @Column(nullable = false)
-    private String course;
+    private String quantity;
 
     @Column(nullable = false)
-    private String studentId;
+    private float subTotal;
 
     @Column(nullable = false)
-    private String email;
+    private float totalPrice;
 
-    @Column(nullable = false)
-    private String mobileNumber;
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = false)
+    User user;
 
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
-    private String address;
+    @ManyToMany(mappedBy = "carts")
+    private List<Product> products;
 }
