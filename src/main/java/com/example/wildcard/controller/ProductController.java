@@ -7,12 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 
 import java.io.IOException;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/products")
+@Controller
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -20,6 +22,13 @@ public class ProductController {
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
+    }
+
+    @GetMapping("/lists")
+    public String showMainPage(Model model) {
+        List<Product> products = productService.getAllProducts();
+        model.addAttribute("products", products);
+        return "products";
     }
 
     // Create a new product with optional image upload

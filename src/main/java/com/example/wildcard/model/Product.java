@@ -28,8 +28,11 @@ public class Product {
     @Column(nullable = false)
     private float price;
 
+    @Column(nullable = false)
+    private String details;
+
     @Lob
-    @Column(nullable = true)
+    @Column(name = "image", nullable = true, length = 20971520) // 20MB max
     private byte[] image;
 
     @ManyToOne

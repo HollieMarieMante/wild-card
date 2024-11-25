@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(@SuppressWarnings("null") ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/css/**")
-                .addResourceLocations("classpath:/static/css/");
+        registry.addResourceHandler("/css/**", "/assets/**")
+                .addResourceLocations("classpath:/static/css/", "classpath:/static/assets/");
     }
 }
