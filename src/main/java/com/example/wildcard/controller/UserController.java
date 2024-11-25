@@ -1,14 +1,22 @@
 package com.example.wildcard.controller;
 
-import com.example.wildcard.model.User;
-import com.example.wildcard.service.UserService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import com.example.wildcard.model.User;
+import com.example.wildcard.service.UserService;
 
 @Controller
 @RequestMapping("/users")
@@ -66,4 +74,23 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/forgetpass")
+    public String resetPassword(@RequestParam String email, @RequestParam String studentID,
+    @RequestParam String newpassword) {
+    User user = userService.findByEmail(email);
+    
+    if (user == null) {
+        return "User not found";
+    }
+    
+    if (!user.getStudentId().equals(studentID)) {
+        return "Invalid student ID";
+    }
+    
+    user.setPassword(newpassword); // Consider adding password hashing
+    userService.updateUser(user.getUserId(), user);
+    
+    return "login";
+}                      
 }
