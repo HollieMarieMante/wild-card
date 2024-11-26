@@ -3,24 +3,42 @@ package com.example.wildcard.service;
 import com.example.wildcard.model.User;
 import com.example.wildcard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    // Use constructor injection instead of field injection
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Create a new user
     public User createUser(User user) {
         // Add any validation logic if needed
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("User with this email already exists");
+        }
+        
+        // Encode password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        
+        // Set default role if not set
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles("USER");
+        }
         return userRepository.save(user);
     }
 
@@ -65,5 +83,10 @@ public class UserService {
 
     public User findById (int id) {
         return userRepository.findByUserId(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email);
     }
 }

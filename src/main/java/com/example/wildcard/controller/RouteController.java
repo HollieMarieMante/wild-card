@@ -3,13 +3,24 @@ package com.example.wildcard.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.wildcard.model.Product;
+import com.example.wildcard.model.User;
 import com.example.wildcard.service.ProductService;
+import com.example.wildcard.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.Authentication;
 
 
 @Controller
@@ -18,14 +29,29 @@ public class RouteController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/")
     public String landingPage() {
         return "home";
     }
 
     @GetMapping("/login")
-    public String loginPage(){
+    public String login(Model model, HttpServletRequest request) {
+        if (request.getUserPrincipal() != null) {
+            return "redirect:/main";
+        }
         return "login";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return "redirect:/login";
     }
 
     @GetMapping("/signup")
@@ -35,24 +61,91 @@ public class RouteController {
 
     @GetMapping("/main")
     public String mainPage(Model model) {
-        List<Product> products = productService.getAllProducts(); // Or use productController method
+        List<Product> products = productService.getAllProducts();
         model.addAttribute("products", products);
+
+        // Get current user details
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            String username = userDetails.getUsername();
+            
+            User currentUser = userService.findByEmail(username);
+            model.addAttribute("user", currentUser);
+        }
+        
         return "main";
+    }
+
+    @GetMapping("/add-product")
+    public String addProductPage(Model model){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            String username = userDetails.getUsername();
+            
+            User currentUser = userService.findByEmail(username);
+            model.addAttribute("user", currentUser);
+        }
+        return "addProduct";
     }
 
     @GetMapping("/forgetpass")
     public String forgetpassName() {
         return "forgetpass";
     }
+
+    @GetMapping("/view-product")
+    public String viewProduct(@RequestParam("id") int productId, Model model) {
+        try {
+            Product product = productService.getProductById(productId);
+            if (product != null) {
+                model.addAttribute("product", product);
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+                    UserDetails userDetails = (UserDetails) auth.getPrincipal();
+                    String username = userDetails.getUsername();
+                    User currentUser = userService.findByEmail(username);
+                    model.addAttribute("user", currentUser);
+                }
+                return "viewProduct"; // This should be the name of your JSP file
+            } else {
+                return "error/product-not-found"; // Create this JSP for product not found errors
+            }
+        } catch (Exception e) {
+            // Log the error
+            e.printStackTrace();
+            return "error/general-error"; // Create this JSP for general errors
+        }
+    }
+
     
     @GetMapping("/profile")
-    public String profilePage() {
+    public String profilePage(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            String username = userDetails.getUsername();
+            
+            User currentUser = userService.findByEmail(username);
+            List<Product> products = productService.getProductsByUser(currentUser.getUserId());
+            model.addAttribute("products", products);
+            model.addAttribute("user", currentUser);
+        }
         return "profile";
     }
     
 
     @GetMapping("/cart")
-    public String cartPage(){
+    public String cartPage(Model model){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            String username = userDetails.getUsername();
+            
+            User currentUser = userService.findByEmail(username);
+            model.addAttribute("user", currentUser);
+        }
         return "cart";
     }
 }

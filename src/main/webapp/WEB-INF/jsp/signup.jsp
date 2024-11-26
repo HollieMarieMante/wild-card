@@ -247,15 +247,6 @@
                 submitButton.disabled = true;
                 submitButton.textContent = 'Signing up...';
 
-                // First check if email already exists
-                const checkEmailResponse = await fetch("/users/email/" + email);
-                
-                if (checkEmailResponse.ok) {
-                    // Email already exists
-                    throw new Error('Email already registered');
-                }
-
-                // If email doesn't exist, proceed with signup
                 const userData = {
                     name: form.name.value,
                     email: form.email.value,

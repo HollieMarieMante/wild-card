@@ -128,10 +128,10 @@
             <div class="login-form">
                 <h1 style="font-weight: bold; font-size: 1.25rem; margin-bottom: 1.25rem;">Login</h1>
                 
-                <form id="loginForm">
+                <form action="/login" method="post">
                     <div class="input-container">
                         <input type="email" 
-                               name="email" 
+                               name="username" 
                                placeholder="Email" 
                                required 
                                class="form-input"
@@ -142,12 +142,12 @@
                                placeholder="Password" 
                                required 
                                class="form-input">
-                               
                                <div class="error-message">
                             </div>
                     </div>
-
-                    <div style="display: flex; flex-direction: column; align-items: center;">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                    <di v style="display: flex; flex-direction: column; align-items: center;">
+                        
                         <button type="submit" class="form-button">
                             Login
                         </button>
@@ -165,55 +165,5 @@
             </div>
         </div>
     </div>
-
-    <%-- Add JavaScript for form handling --%>
-    <script>
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const form = e.target;
-        const email = form.email.value;
-        const password = form.password.value;
-        const submitButton = form.querySelector('button[type="submit"]');
-        const errorDiv = form.querySelector('.error-message');
-        
-        // Disable button and show loading state
-        submitButton.disabled = true;
-        submitButton.textContent = 'Logging in...';
-        errorDiv.style.display = 'none';
-
-        try {
-            const response = await fetch("/users/email/" + email);
-            const userData = await response.json();
-
-            console.log(userData)
-
-            if (response.ok && userData.password === password) {
-                // Create session data
-                const sessionToken = {
-                    userId: userData.userId,
-                    name: userData.name,
-                    email: userData.email
-                    // Add any other necessary user data
-                };
-                
-                // Store in session cookie with secure flags
-                const encodedData = encodeURIComponent(JSON.stringify(sessionToken));
-                document.cookie = `session=${encodedData}; path=/; samesite=strict; max-age=3600`; // 1 hour
-                
-                // Redirect to main page
-                window.location.href = '/main';
-            } else {
-                throw new Error('Invalid email or password');
-            }
-        } catch (error) {
-            errorDiv.textContent = 'Invalid email or password';
-            errorDiv.style.display = 'block';
-        } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Login';
-        }
-    });
-</script>
 </body>
 </html>

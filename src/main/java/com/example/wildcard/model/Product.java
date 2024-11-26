@@ -29,6 +29,9 @@ public class Product {
     private float price;
 
     @Column(nullable = false)
+    private int quantity;
+
+    @Column(nullable = false)
     private String details;
 
     @Column(length = 500, name = "image_url")

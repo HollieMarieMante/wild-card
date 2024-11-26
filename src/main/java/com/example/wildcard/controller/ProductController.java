@@ -2,6 +2,11 @@ package com.example.wildcard.controller;
 
 import com.example.wildcard.model.Product;
 import com.example.wildcard.service.ProductService;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +19,28 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+
+    @Data
+    @Getter
+    @Setter
+    public class ProductRequest {
+        private Product product;
+        private String filePath;
+        private String email;
+        private String quantity;
+    }
+    
     @Autowired
     private ProductService productService;
 
     // Create a new product
     @PostMapping
-    public ResponseEntity<Product> createProduct(
-            @ModelAttribute Product product, 
-            @RequestParam String filePath, @RequestParam String email
-    ) throws IOException {
-        Product createdProduct = productService.createProduct(product,filePath, email);
+    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) throws IOException {
+        Product createdProduct = productService.createProduct(
+            productRequest.getProduct(), 
+            productRequest.getFilePath(), 
+            productRequest.getEmail()
+        );
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
@@ -43,14 +60,6 @@ public class ProductController {
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
-    }
-
-    // Get product by ID
-    @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable int productId) {
-        return productService.getProductById(productId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
     }
 
     // Delete a product
