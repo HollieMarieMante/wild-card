@@ -330,5 +330,29 @@
             </div>
         </div>
     </div>
+    <script>
+        (function() {
+            window.history.pushState(null, document.title, location.href);
+            window.addEventListener('popstate', function(event) {
+                window.history.pushState(null, document.title, location.href);
+            });
+        })();
+
+        document.getElementById('logout-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        var form = document.createElement('form');
+        form.method = 'post';
+        form.action = '${pageContext.request.contextPath}/logout';
+        
+        var csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '${_csrf.parameterName}';
+        csrfInput.value = '${_csrf.token}';
+        
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+    });
+    </script>
 </body>
 </html>

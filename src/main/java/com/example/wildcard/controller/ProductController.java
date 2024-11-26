@@ -1,15 +1,25 @@
 package com.example.wildcard.controller;
 
+import com.example.wildcard.dto.ProductRequest;
 import com.example.wildcard.model.Product;
+import com.example.wildcard.model.User;
+import com.example.wildcard.repository.ProductRepository;
+import com.example.wildcard.repository.UserRepository;
+import com.example.wildcard.service.ImageUploadService;
 import com.example.wildcard.service.ProductService;
+import com.example.wildcard.service.UserService;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,28 +30,35 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    @Data
-    @Getter
-    @Setter
-    public class ProductRequest {
-        private Product product;
-        private String filePath;
-        private String email;
-        private String quantity;
-    }
-    
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ImageUploadService imageUploadService;
+
+    @Autowired
+    private ProductRepository productRepository;
+
     // Create a new product
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) throws IOException {
-        Product createdProduct = productService.createProduct(
-            productRequest.getProduct(), 
-            productRequest.getFilePath(), 
-            productRequest.getEmail()
-        );
-        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+    public Product createProduct(@RequestBody ProductRequest productRequest) throws IOException {
+        Product product = new Product();
+        product.setProductName(productRequest.getProductName());
+        product.setCategory(productRequest.getCategory());
+        product.setDetails(productRequest.getDetails());
+        product.setPrice(Float.parseFloat(productRequest.getPrice()));
+        product.setQuantity(Integer.parseInt(productRequest.getQuantity()));
+
+        String imageUrl = imageUploadService.uploadImage(productRequest.getImageUrl());
+        product.setImageUrl(imageUrl);
+
+        User user = userService.findByEmail(productRequest.getEmail());
+        product.setUser(user);
+        
+        return productRepository.save(product);
     }
 
     // Update an existing product

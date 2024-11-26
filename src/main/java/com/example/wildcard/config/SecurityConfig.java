@@ -2,6 +2,7 @@ package com.example.wildcard.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,9 +27,12 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/").permitAll()
+                .requestMatchers(HttpMethod.GET, "/products").permitAll()
+                .requestMatchers(HttpMethod.POST, "/products").permitAll() 
                 .requestMatchers("/css/**", "/assets/**", "/js/**", "/WEB-INF/jsp/**").permitAll()
                 .requestMatchers("/signup", "/forgetpass", "/users", "/products").permitAll()
-                .requestMatchers("/login").permitAll()
+                .requestMatchers("/login", "/products", "/home").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

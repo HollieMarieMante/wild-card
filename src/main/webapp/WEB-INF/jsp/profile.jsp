@@ -221,9 +221,13 @@
                     <c:otherwise>
                         <c:forEach var="product" items="${products}">
                             <div class="transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden card col-span-1 h-[17rem] mt-5 shadow-xl rounded-xl bg-[#4D4848] inline-block">
-                                <figure>
-                                    <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="car!" />
+                                <figure class="h-[60%] w-full items-center justify-center bg-black overflow-hidden">
+                                    <img
+                                    src= "${product.imageUrl}"
+                                    alt="photo unavailable" 
+                                    class="cover"/>
                                 </figure>
+
                                 <div class="card-body p-5">
                                     <div class="flex justify-between">
                                         <div class="flex flex-col">
@@ -241,5 +245,29 @@
         </div>
     </div>
 </sec:authorize>
+<script>
+    (function() {
+        window.history.pushState(null, document.title, location.href);
+        window.addEventListener('popstate', function(event) {
+            window.history.pushState(null, document.title, location.href);
+        });
+    })();
+
+    document.getElementById('logout-link').addEventListener('click', function(e) {
+    e.preventDefault();
+    var form = document.createElement('form');
+    form.method = 'post';
+    form.action = '${pageContext.request.contextPath}/logout';
+    
+    var csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '${_csrf.parameterName}';
+    csrfInput.value = '${_csrf.token}';
+    
+    form.appendChild(csrfInput);
+    document.body.appendChild(form);
+    form.submit();
+});
+</script>
 </body>
 </html>

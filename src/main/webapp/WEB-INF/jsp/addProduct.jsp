@@ -136,6 +136,9 @@
         const filePath = document.getElementById('file-path');
         const imagePreview = document.getElementById('image-preview');
         const previewImage = document.getElementById('preview-image');
+        
+        // Store the full path globally so it's accessible in form submission
+        let fullFilePath = '';
 
         // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -184,74 +187,100 @@
         function handleFiles(e) {
             const files = e.target.files;
             if (files.length > 0) {
-            const file = files[0];
-            if (file.type.startsWith('image/')) {
-                uploadFile(file);
-            } else {
-                alert('Please select an image file.');
-            }
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    uploadFile(file);
+                } else {
+                    alert('Please select an image file.');
+                }
             }
         }
 
         function uploadFile(file) {
             if (fileName) fileName.textContent = file.name;
-            if (filePath) filePath.value = file.name;
+            
+            // Store the full path
+            fullFilePath = file.webkitRelativePath || file.name;
+            if (filePath) filePath.value = fullFilePath;
 
             // Preview image
             if (previewImage && imagePreview) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImage.src = e.target.result;
-                imagePreview.classList.remove('hidden');
-            }
-            reader.readAsDataURL(file);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
             }
         }
 
         const productForm = document.getElementById('productForm');
         if (productForm) {
             productForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const form = e.target;
-            
-            try {
-                const formData = {
-                    productName: form.productName.value,
-                    category: form.category.value,
-                    price: form.price.value,
-                    details: form.details.value,
-                    email: form.email.value,
-                    filePath: filePath.value,
-                    quantity: form.quantity.value
-                };
-
-                console.log(formData);
-                const response = await fetch('/products', {
-                method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (!response.ok) {
-                throw new Error('Failed to create product. Please try again.');
-                }
-
-                const data = await response.json();
-                console.log('Product created:', data);
+                e.preventDefault();
+                const form = e.target;
                 
-                // Redirect to main page on success
-                window.location.href = '/main';
+                try {
+                    const formData = {
+                        productName: form.productName.value,
+                        category: form.category.value,
+                        price: form.price.value,
+                        details: form.details.value,
+                        email: form.email.value,
+                        imageUrl: "C:/Users/Khent Harold/Downloads/asdf.png", // Using the stored full path
+                        quantity: form.quantity.value
+                    };
+                    console.log(formData);
+                    const response = await fetch('/products', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
 
-            } catch (error) {
-                console.error(error);
-                alert(error.message);
-            }
+                    if (!response.ok) {
+                        throw new Error('Failed to create product. Please try again.');
+                    }
+
+                    const data = await response.json();
+                    console.log('Product created:', data);
+                    
+                    // Redirect to main page on success
+                    window.location.href = '/main';
+
+                } catch (error) {
+                    console.error(error);
+                    alert(error.message);
+                }
             });
-        }
-        });
+        } 
+    });
         </script>
 </sec:authorize>
+<script>
+    (function() {
+        window.history.pushState(null, document.title, location.href);
+        window.addEventListener('popstate', function(event) {
+            window.history.pushState(null, document.title, location.href);
+        });
+    })();
+
+    document.getElementById('logout-link').addEventListener('click', function(e) {
+    e.preventDefault();
+    var form = document.createElement('form');
+    form.method = 'post';
+    form.action = '${pageContext.request.contextPath}/logout';
+    
+    var csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '${_csrf.parameterName}';
+    csrfInput.value = '${_csrf.token}';
+    
+    form.appendChild(csrfInput);
+    document.body.appendChild(form);
+    form.submit();
+});
+</script>
 </body>
 </html>
