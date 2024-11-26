@@ -189,17 +189,17 @@
             console.log(userData)
 
             if (response.ok && userData.password === password) {
-                // Create sanitized version of user data
-                const sanitizedUserData = {
+                // Create session data
+                const sessionToken = {
                     userId: userData.userId,
                     name: userData.name,
-                    email: userData.email,
-                    studentId: userData.studentId,
-                    course: userData.course
+                    email: userData.email
+                    // Add any other necessary user data
                 };
-
-                // Store in session cookie
-                document.cookie = `session=${JSON.stringify(sanitizedUserData)}; path=/; secure; samesite=strict; max-age=86400`;
+                
+                // Store in session cookie with secure flags
+                const encodedData = encodeURIComponent(JSON.stringify(sessionToken));
+                document.cookie = `session=${encodedData}; path=/; samesite=strict; max-age=3600`; // 1 hour
                 
                 // Redirect to main page
                 window.location.href = '/main';

@@ -7,105 +7,94 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 
 import java.io.IOException;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/products")
 public class ProductController {
-
-    private final ProductService productService;
-
     @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private ProductService productService;
 
-    @GetMapping("/lists")
-    public String showMainPage(Model model) {
-        List<Product> products = productService.getAllProducts();
-        model.addAttribute("products", products);
-        return "products";
-    }
-
-    // Create a new product with optional image upload
+    // Create a new product
     @PostMapping
     public ResponseEntity<Product> createProduct(
-            @RequestPart("product") Product product,
-            @RequestPart(value = "image", required = false) MultipartFile imageFile
+            @ModelAttribute Product product, 
+            @RequestParam String filePath, @RequestParam String email
     ) throws IOException {
-        Product createdProduct = imageFile != null
-                ? productService.createProductWithImage(product, imageFile)
-                : productService.createProduct(product);
+        Product createdProduct = productService.createProduct(product,filePath, email);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+    }
+
+    // Update an existing product
+    @PutMapping("/{productId}")
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable int productId, 
+            @ModelAttribute Product product, 
+            @RequestParam String filePath
+    ) throws IOException {
+        Product updatedProduct = productService.updateProduct(productId, product, filePath);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     // Get all products
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return ResponseEntity.ok(products);
     }
 
     // Get product by ID
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable int productId) {
         return productService.getProductById(productId)
-                .map(product -> new ResponseEntity<>(product, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Update product with optional image upload
-    @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(
-            @PathVariable int productId,
-            @RequestPart("product") Product productDetails,
-            @RequestPart(value = "image", required = false) MultipartFile imageFile
-    ) throws IOException {
-        Product updatedProduct = imageFile != null
-                ? productService.updateProductWithImage(productId, productDetails, imageFile)
-                : productService.updateProduct(productId, productDetails);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-    }
-
-    // Delete product
+    // Delete a product
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int productId) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable int productId) throws IOException {
         productService.deleteProduct(productId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     // Get products by category
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable String category) {
         List<Product> products = productService.getProductsByCategory(category);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return ResponseEntity.ok(products);
     }
 
     // Get products by user
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Product>> getProductsByUser(@PathVariable int userId) {
         List<Product> products = productService.getProductsByUser(userId);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return ResponseEntity.ok(products);
     }
 
-    // Get products by price range
-    @GetMapping("/price")
+    // Search products by price range
+    @GetMapping("/price-range")
     public ResponseEntity<List<Product>> getProductsByPriceRange(
-            @RequestParam float minPrice,
+            @RequestParam float minPrice, 
             @RequestParam float maxPrice
     ) {
         List<Product> products = productService.getProductsByPriceRange(minPrice, maxPrice);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return ResponseEntity.ok(products);
     }
 
-    // Get products by name
+    // Search products by name
     @GetMapping("/search")
-    public ResponseEntity<List<Product>> getProductsByName(@RequestParam String productName) {
-        List<Product> products = productService.getProductsByName(productName);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+    public ResponseEntity<List<Product>> searchProductsByName(@RequestParam String keyword) {
+        List<Product> products = productService.searchProductsByName(keyword);
+        return ResponseEntity.ok(products);
+    }
+
+    // Global exception handler for IOException
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleIOException(IOException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error processing image: " + e.getMessage());
     }
 }

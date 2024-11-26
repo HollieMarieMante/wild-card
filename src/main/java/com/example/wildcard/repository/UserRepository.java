@@ -3,6 +3,8 @@ package com.example.wildcard.repository;
 import com.example.wildcard.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.List;
+
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -11,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // Example of a custom method
     User findByEmail(String email);
     User findByStudentId(String studentId);
+    User findByName(String name);
+    User findByUserId(int userId);
 }

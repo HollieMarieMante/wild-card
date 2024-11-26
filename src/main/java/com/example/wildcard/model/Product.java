@@ -31,9 +31,8 @@ public class Product {
     @Column(nullable = false)
     private String details;
 
-    @Lob
-    @Column(name = "image", nullable = true, length = 20971520) // 20MB max
-    private byte[] image;
+    @Column(length = 500, name = "image_url")
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)

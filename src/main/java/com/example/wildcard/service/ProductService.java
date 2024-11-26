@@ -1,6 +1,7 @@
 package com.example.wildcard.service;
 
 import com.example.wildcard.model.Product;
+import com.example.wildcard.model.User;
 import com.example.wildcard.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,25 +13,42 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
-
-    private final ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private ImageUploadService imageUploadService;
+
+    @Autowired
+    private UserService userService;
 
     // Create a new product
-    public Product createProduct(Product product) {
+    public Product createProduct(Product product,String filePath, String email) throws IOException {
+        // If an image is provided, upload it and set the URL
+        User user = userService.findByEmail(email);
+        String imageUrl = imageUploadService.uploadImage(filePath);
+        product.setImageUrl(imageUrl);
+
+        product.setUser(user);
         return productRepository.save(product);
     }
 
-    // Create a product with image upload
-    public Product createProductWithImage(Product product, MultipartFile imageFile) throws IOException {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            product.setImage(imageFile.getBytes());
-        }
-        return productRepository.save(product);
+    // Update an existing product
+    public Product updateProduct(int productId, Product updatedProduct, String filePath) throws IOException {
+        Product existingProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // Update product details
+        existingProduct.setProductName(updatedProduct.getProductName());
+        existingProduct.setCategory(updatedProduct.getCategory());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setDetails(updatedProduct.getDetails());
+            
+            // Upload new image
+            String newImageUrl = imageUploadService.uploadImage(filePath);
+            existingProduct.setImageUrl(newImageUrl);
+
+        return productRepository.save(existingProduct);
     }
 
     // Get all products
@@ -43,61 +61,33 @@ public class ProductService {
         return productRepository.findById(productId);
     }
 
-    // Update product
-    public Product updateProduct(int productId, Product productDetails) {
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+    // Delete a product
+    public void deleteProduct(int productId) throws IOException {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        existingProduct.setProductName(productDetails.getProductName());
-        existingProduct.setCategory(productDetails.getCategory());
-        existingProduct.setPrice(productDetails.getPrice());
-        existingProduct.setUser(productDetails.getUser());
-
-        return productRepository.save(existingProduct);
-    }
-
-    // Update product with image
-    public Product updateProductWithImage(int productId, Product productDetails, MultipartFile imageFile) throws IOException {
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
-
-        existingProduct.setProductName(productDetails.getProductName());
-        existingProduct.setCategory(productDetails.getCategory());
-        existingProduct.setPrice(productDetails.getPrice());
-        existingProduct.setUser(productDetails.getUser());
-
-        if (imageFile != null && !imageFile.isEmpty()) {
-            existingProduct.setImage(imageFile.getBytes());
+        // Delete associated image if exists
+        if (product.getImageUrl() != null) {
+            imageUploadService.deleteImage(product.getImageUrl());
         }
 
-        return productRepository.save(existingProduct);
+        productRepository.deleteById(productId);
     }
 
-    // Delete product
-    public void deleteProduct(int productId) {
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
-
-        productRepository.delete(existingProduct);
-    }
-
-    // Find products by category
+    // Additional custom methods based on repository
     public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategory(category);
     }
 
-    // Find products by user
     public List<Product> getProductsByUser(int userId) {
         return productRepository.findByUser_UserId(userId);
     }
 
-    // Find products by price range
     public List<Product> getProductsByPriceRange(float minPrice, float maxPrice) {
         return productRepository.findByPriceBetween(minPrice, maxPrice);
     }
 
-    // Find products by name
-    public List<Product> getProductsByName(String productName) {
-        return productRepository.findByProductNameContainingIgnoreCase(productName);
+    public List<Product> searchProductsByName(String keyword) {
+        return productRepository.findByProductNameContainingIgnoreCase(keyword);
     }
 }

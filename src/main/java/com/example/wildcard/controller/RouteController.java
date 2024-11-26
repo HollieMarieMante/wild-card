@@ -1,12 +1,22 @@
 package com.example.wildcard.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.wildcard.model.Product;
+import com.example.wildcard.service.ProductService;
 
 
 @Controller
 public class RouteController {
+
+    @Autowired
+    private ProductService productService;
 
     @GetMapping("/")
     public String landingPage() {
@@ -24,13 +34,20 @@ public class RouteController {
     }
 
     @GetMapping("/main")
-    public String mainPage(){
+    public String mainPage(Model model) {
+        List<Product> products = productService.getAllProducts(); // Or use productController method
+        model.addAttribute("products", products);
         return "main";
     }
 
     @GetMapping("/forgetpass")
     public String forgetpassName() {
         return "forgetpass";
+    }
+    
+    @GetMapping("/profile")
+    public String profilePage() {
+        return "profile";
     }
     
 
