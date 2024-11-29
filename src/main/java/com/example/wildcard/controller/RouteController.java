@@ -35,18 +35,25 @@ public class RouteController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/landing")
     public String landingPage() {
         return "home";
     }
 
+
     @GetMapping("/login")
-    public String login(Model model, HttpServletRequest request) {
-        if (request.getUserPrincipal() != null) {
+    public String login(HttpServletRequest request) {
+    if (request.getUserPrincipal() != null) {
+        // Check roles and redirect accordingly
+        if (request.isUserInRole("SUPER_ADMIN")) {
+            return "redirect:/admin";
+        } else if (request.isUserInRole("USER")) {
             return "redirect:/main";
         }
-        return "login";
     }
+    return "login";
+    }
+
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
@@ -132,6 +139,30 @@ public class RouteController {
                     model.addAttribute("user", currentUser);
                 }
                 return "viewProduct"; // This should be the name of your JSP file
+            } else {
+                return "error/product-not-found"; // Create this JSP for product not found errors
+            }
+        } catch (Exception e) {
+            // Log the error
+            e.printStackTrace();
+            return "error/general-error"; // Create this JSP for general errors
+        }
+    }
+
+    @GetMapping("/view-productadmin")
+    public String viewProductadmin(@RequestParam("id") int productId, Model model) {
+        try {
+            Product product = productService.getProductById(productId);
+            if (product != null) {
+                model.addAttribute("product", product);
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+                    UserDetails userDetails = (UserDetails) auth.getPrincipal();
+                    String username = userDetails.getUsername();
+                    User currentUser = userService.findByEmail(username);
+                    model.addAttribute("user", currentUser);
+                }
+                return "viewProductadmin"; // This should be the name of your JSP file
             } else {
                 return "error/product-not-found"; // Create this JSP for product not found errors
             }

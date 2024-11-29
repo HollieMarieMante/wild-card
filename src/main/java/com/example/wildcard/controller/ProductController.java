@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/products")
@@ -93,8 +95,46 @@ public class ProductController {
         List<Product> products = productService.getProductsByStatus(status);
         return ResponseEntity.ok(products);
     }
+
+
+    //to change status
+    @PutMapping("/{productId}/status")
+    public ResponseEntity<Map<String, String>> updateProductStatus(
+            @PathVariable int productId, 
+            @RequestBody Map<String, Integer> request) {
+        try {
+            // Extract the status value from the request
+            Integer status = request.get("status");
+            if (status == null) {
+                throw new IllegalArgumentException("Status is required");
+            }
     
+            // Call the service to update the product status
+            int result = productService.updateProductStatus(productId, status);
     
+            // Prepare the response
+            Map<String, String> response = new HashMap<>();
+            if (result == 1) {
+                response.put("message", "Product status updated successfully.");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("message", "Failed to update product status.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        } catch (IllegalArgumentException e) {
+            // Handle bad requests
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        } catch (RuntimeException e) {
+            // Handle not found or other runtime exceptions
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Product not found: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+    }
+    
+
 
     // Delete a product
     @DeleteMapping("/{productId}")

@@ -5,6 +5,7 @@ import com.example.wildcard.model.User;
 import com.example.wildcard.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -73,6 +74,25 @@ public class ProductService {
 
         productRepository.deleteById(productId);
     }
+    @Transactional
+    public int updateProductStatus(int productId, int status) {
+        try {
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            
+            product.setStatus(status);
+            productRepository.save(product);
+            return 1; // Indicate success
+        } catch (Exception e) {
+            // Log the exception if needed
+            System.err.println("Error updating product status: " + e.getMessage());
+            return 0; // Indicate failure
+        }
+    }
+    
+ 
+
+
 
     // Additional custom methods based on repository
     public List<Product> getProductsByCategory(String category) {

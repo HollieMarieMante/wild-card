@@ -128,7 +128,7 @@
                             <h1 class="text-white font-bold">${product.productName}</h1>
                             <p>&#8369;<fmt:formatNumber value="${product.price}" maxFractionDigits="0" /></p>
                         </div>
-                        <a href="/view-product?id=${product.productId}">
+                        <a href="/view-productadmin?id=${product.productId}">
                             <button class="btn btn-primary bg-opacity-45">Learn now!</button>
                         </a>
                     </div>

@@ -78,11 +78,20 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
-        handler.setUseReferer(false);
-        handler.setDefaultTargetUrl("/main");
-        return handler;
+        return (request, response, authentication) -> {
+            // Check the user's roles and redirect accordingly
+            if (authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_SUPER_ADMIN"))) {
+                response.sendRedirect("/admin");
+            } else if (authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
+                response.sendRedirect("/main");
+            } else {
+                response.sendRedirect("/access-denied");
+            }
+        };
     }
+    
 
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
