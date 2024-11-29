@@ -113,7 +113,7 @@
     </c:when>
     <c:otherwise>
         <c:forEach var="product" items="${products}">
-            <c:if test="${product.status == 1}">
+            <c:if test="${product.status == -1}">
             <div class="transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden card col-span-1 h-[17rem] mt-5 shadow-xl rounded-xl bg-[#4D4848] inline-block">
                 <figure class="h-[60%] w-full items-center justify-center bg-black overflow-hidden">
                     <img

@@ -25,23 +25,30 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Create a new user
-    public User createUser(User user) {
-        // Add any validation logic if needed
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("User with this email already exists");
-        }
-        
-        // Encode password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        
-        // Set default role if not set
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles("USER");
-        }
-        return userRepository.save(user);
+// Create a new user
+public User createUser(User user) {
+    // Check if the email already exists
+    if (userRepository.findByEmail(user.getEmail()) != null) {
+        throw new RuntimeException("User with this email already exists");
     }
 
+    // Encode the password
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+    // Check if there are no existing users in the database
+    if (userRepository.findAll().isEmpty()) {
+        // First user gets ADMIN role
+        user.setRoles("ADMIN");
+    } else {
+        // Default role for subsequent users
+        if (user.getRoles() == null || user.getRoles().trim().isEmpty()) {
+            user.setRoles("USER");
+        }
+    }
+
+    // Save the user
+    return userRepository.save(user);
+}
     // Get all users
     public List<User> getAllUsers() {
         return userRepository.findAll();

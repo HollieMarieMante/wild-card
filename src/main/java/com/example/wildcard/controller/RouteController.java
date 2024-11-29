@@ -79,6 +79,26 @@ public class RouteController {
         
         return "main";
     }
+    //for ADMIN
+    @GetMapping("/admin")
+    public String adminPage(Model model) {
+        List<Product> products = productService.getAllProducts();
+        model.addAttribute("products", products);
+
+        // Get current user details
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            String username = userDetails.getUsername();
+            
+            User currentUser = userService.findByEmail(username);
+            model.addAttribute("user", currentUser);
+        }
+        
+        return "admin";
+    }
+
+
 
     @GetMapping("/add-product")
     public String addProductPage(Model model){

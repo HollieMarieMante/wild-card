@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,13 +52,21 @@ public class ProductController {
         product.setDetails(productRequest.getDetails());
         product.setPrice(Float.parseFloat(productRequest.getPrice()));
         product.setQuantity(Integer.parseInt(productRequest.getQuantity()));
+        product.setStatus(-1);
+        // Upload the image and set the URL
+      /*   String imageUrl = imageUploadService.uploadImage(productRequest.getImageUrl());
+        product.setImageUrl(imageUrl);*/
 
-        String imageUrl = imageUploadService.uploadImage(productRequest.getImageUrl());
-        product.setImageUrl(imageUrl);
-
+        // Find user by email
         User user = userService.findByEmail(productRequest.getEmail());
+        if (user == null) {
+            throw new IllegalArgumentException("User not found with email: " + productRequest.getEmail());
+        }
+
+        // Set user and createdBy fields
         product.setUser(user);
-        
+        product.setCreatedBy(user.getName()); // Set the user's name as the createdBy field
+
         return productRepository.save(product);
     }
 
@@ -78,6 +87,14 @@ public class ProductController {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
+    //Get product using status
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Product>> getProductsByStatus(@PathVariable int status) {
+        List<Product> products = productService.getProductsByStatus(status);
+        return ResponseEntity.ok(products);
+    }
+    
+    
 
     // Delete a product
     @DeleteMapping("/{productId}")

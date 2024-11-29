@@ -90,4 +90,8 @@ public class ProductService {
     public List<Product> searchProductsByName(String keyword) {
         return productRepository.findByProductNameContainingIgnoreCase(keyword);
     }
+
+    public List<Product> getProductsByStatus(int status) {
+        return productRepository.findByStatus(status);
+    }
 }

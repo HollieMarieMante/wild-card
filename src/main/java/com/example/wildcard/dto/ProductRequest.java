@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
     public class ProductRequest {
+    private String name;
     private String productName;
     private String category;
     private String price;
@@ -16,5 +17,5 @@ import lombok.Setter;
     private String details;
     private String imageUrl;
     private String email;
-
+    private int status;
     }

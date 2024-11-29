@@ -227,7 +227,7 @@
                         price: form.price.value,
                         details: form.details.value,
                         email: form.email.value,
-                        imageUrl: "C:/Users/Khent Harold/Downloads/asdf.png", // Using the stored full path
+                      //  imageUrl: "C:/Users/Khent Harold/Downloads/asdf.png", // Using the stored full path
                         quantity: form.quantity.value
                     };
                     console.log(formData);
