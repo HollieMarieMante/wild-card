@@ -233,6 +233,22 @@
                                         <div class="flex flex-col">
                                             <h1 class="text-white  font-bold">${product.productName}</h1>
                                             <p>$<fmt:formatNumber value="${product.price}" maxFractionDigits="0"/></p>
+                                            <p>
+                                                <c:choose>
+                                                    <c:when test="${product.status == -1}">
+                                                        <span class="text-yellow-400">Pending</span>
+                                                    </c:when>
+                                                    <c:when test="${product.status == 0}">
+                                                        <span class="text-red-400">Disapproved</span>
+                                                    </c:when>
+                                                    <c:when test="${product.status == 1}">
+                                                        <span class="text-green-400">Approved</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="text-gray-400">Unknown</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </p>
                                         </div>
                                         <button class="btn btn-primary w-20 p-0 bg-opacity-45"><p class="text-sm">Edit</button>
                                     </div>

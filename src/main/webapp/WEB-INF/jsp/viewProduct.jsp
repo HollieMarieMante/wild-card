@@ -309,6 +309,10 @@
                     <label>Product Price:</label>
                     <div class="value">&#8369;<fmt:formatNumber value="${product.price}" maxFractionDigits="0" /></div>
                 </div>
+                <div class="info-group">
+                    <label>Created By:</label>
+                    <div class="value">${product.createdBy}</div>
+                </div>
 
                 <div class="flex items-center">
                     <button class="btn btn-square btn-sm" onclick="decrementQuantity(this)">-</button>
