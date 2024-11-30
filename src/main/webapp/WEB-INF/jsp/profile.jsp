@@ -231,7 +231,9 @@
                                 <div class="card-body p-5">
                                     <div class="flex justify-between">
                                         <div class="flex flex-col">
-                                            <h1 class="text-white  font-bold">${product.productName}</h1>
+                                            <h1 class="text-white font-bold">
+                ${product.productName.length() > 8 ? product.productName.substring(0, 8).concat('...') : product.productName}
+            </h1>
                                             <p>$<fmt:formatNumber value="${product.price}" maxFractionDigits="0"/></p>
                                             <p>
                                                 <c:choose>
