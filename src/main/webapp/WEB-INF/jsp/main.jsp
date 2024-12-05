@@ -1,67 +1,224 @@
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %> <%@
-taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> <%@ taglib
-prefix="form" uri="http://www.springframework.org/tags/form" %> <%@ taglib
-prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/css/styles.css" rel="stylesheet" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=poppins:wght@300;400;500;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=poppins:wght@300;400;500;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      body {
-        font-family: "poppins", sans-serif;
-      }
-      /* Remove spinner arrows from number input */
-      input[type="number"]::-webkit-inner-spin-button,
-      input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-      input[type="number"] {
-        -moz-appearance: textfield;
-      }
-
-      /* Custom styles for dropdown */
-      .dropdown summary::-webkit-details-marker {
-        display: none;
-      }
-
-      .dropdown[open] .dropdown-content {
-        animation: slideDown 0.2s ease-out;
-      }
-
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
+        body {
+            font-family: "poppins", sans-serif;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        /* Remove spinner arrows from number input */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-      }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
 
-      /* Ensure dropdown stays on top */
-      .dropdown {
-        position: relative;
-        z-index: 9999;
-      }
+        /* Custom styles for dropdown */
+        .dropdown summary::-webkit-details-marker {
+            display: none;
+        }
 
-      .dropdown-content {
-        position: absolute;
-        right: 0;
-      }
+        .dropdown[open] .dropdown-content {
+            animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ensure dropdown stays on top */
+        .dropdown {
+            position: relative;
+            z-index: 9999;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            right: 0;
+        }
+
+        /* Modal styles */
+        .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #E8E2D7;
+    padding: 40px;
+    border-radius: 12px;
+    width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 40px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 30px;
+    height: 30px;
+    background: #AD4646;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 10;
+}
+
+.modal-close:hover {
+    background: #963e3e;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.product-header h3 {
+    font-size: 28px;
+    color: #333;
+    font-weight: 500;
+}
+
+.info-label {
+    color: #666;
+    font-size: 0.95em;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-size: 1.1em;
+    color: #333;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ccc;
+}
+
+.divider {
+    width: 1px;
+    background-color: #ccc;
+    height: auto;
+    margin: 0;
+}
+
+.product-image-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.product-image {
+    width: 400px;
+    height: 300px;
+    border: 2px solid #AD4646;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.quantity-control button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #AD4646;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.quantity-control input {
+    width: 60px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-add-cart {
+    padding: 12px 24px;
+    background: #AD4646;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    min-width: 150px;
+}
+
+.btn-buy-now {
+    padding: 12px 24px;
+    background: #2B5C2B;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    min-width: 150px;
+}
     </style>
     <title>Wild Cart</title>
-  </head>
-  <body>
+</head>
+<body>
     <sec:authorize access="isAuthenticated()">
       <div class="flex flex-col items-center w-dvw h-dvh bg-[#F2E8C6]">
         <div class="h-20 w-full">
@@ -168,84 +325,164 @@ prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
                     </h2>
                   </div>
                 </c:when>
-                <c:otherwise>
-                  <c:forEach var="product" items="${products}">
-                    <c:if test="${product.status == 1}">
-                      <div
-                        class="transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden card col-span-1 h-[17rem] mt-5 shadow-xl rounded-xl bg-[#4D4848] inline-block"
-                      >
-                        <figure
-                          class="h-[60%] w-full items-center justify-center bg-black overflow-hidden"
-                        >
-                          <img
-                            src="${product.imageUrl}"
-                            alt="photo unavailable"
-                            class="cover"
-                          />
-                        </figure>
+                            <c:otherwise>
+                                <c:forEach var="product" items="${products}">
+                                    <c:if test="${product.status == 1}">
+                                        <div class="transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden card col-span-1 h-[17rem] mt-5 shadow-xl rounded-xl bg-[#4D4848] inline-block">
+                                            <figure class="h-[60%] w-full items-center justify-center bg-black overflow-hidden">
+                                                <img src="${product.imageUrl}" alt="photo unavailable" class="cover" />
+                                            </figure>
 
-                        <div class="card-body p-5">
-                          <div class="flex justify-between">
-                            <div class="flex flex-col">
-                              <h1 class="text-white font-bold">
-                                ${product.productName.length() > 8 ?
-                                product.productName.substring(0,
-                                8).concat('...') : product.productName}
-                              </h1>
-                              <p>
-                                &#8369;<fmt:formatNumber
-                                  value="${product.price}"
-                                  maxFractionDigits="0"
-                                />
-                              </p>
-                            </div>
-                            <a href="/view-product?id=${product.productId}">
-                              <button class="btn btn-primary bg-opacity-45">
-                                Learn now!
-                              </button>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </c:if>
-                  </c:forEach>
-                </c:otherwise>
-              </c:choose>
-
-              <div
-                class="flex w-full justify-center items-center col-span-4 py-10"
-              ></div>
+                                            <div class="card-body p-5">
+                                                <div class="flex justify-between">
+                                                    <div class="flex flex-col">
+                                                        <h1 class="text-white font-bold">
+                                                            ${product.productName.length() > 8 ? product.productName.substring(0, 8).concat('...') : product.productName}
+                                                        </h1>
+                                                        <p>&#8369;<fmt:formatNumber value="${product.price}" maxFractionDigits="0"/></p>
+                                                    </div>
+                                                    <button onclick="openProductModal(${product.productId})" class="btn btn-primary bg-opacity-45">
+                                                        Buy now!
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
             </div>
+
+            <!-- Product View Modal -->
+            <div id="productModal" class="modal">
+              <div class="modal-content">
+                <button class="modal-close" onclick="closeProductModal()">&times;</button>
+                  <div class="product-info">
+                      <div class="product-header">
+                          <svg width="30" height="30" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
+                          </svg>
+                          <h3>Product Overview</h3>
+                      </div>
+                      <div>
+                          <div class="info-label">Product Name:</div>
+                          <div id="modalProductName" class="info-value"></div>
+                      </div>
+                      <div>
+                          <div class="info-label">Product Details:</div>
+                          <div id="modalProductDetails" class="info-value"></div>
+                      </div>
+                      <div>
+                          <div class="info-label">Product Price:</div>
+                          <div id="modalProductPrice" class="info-value"></div>
+                      </div>
+                      <div>
+                          <div class="info-label">Created By:</div>
+                          <div id="modalCreatedBy" class="info-value"></div>
+                      </div>
+                      <div class="quantity-control">
+                          <button onclick="decrementQuantity()">-</button>
+                          <input type="number" id="modalQuantity" value="1" min="1" readonly>
+                          <button onclick="incrementQuantity()">+</button>
+                      </div>
+                  </div>
+                  
+                  <div class="divider"></div>
+                  
+                  <div class="product-image-section">
+                      <div class="product-image">
+                          <img id="modalProductImage" src="" alt="Product Image">
+                      </div>
+                      <div class="action-buttons">
+                          <button class="btn-add-cart" onclick="addToCart()">Add to Cart</button>
+                          <button class="btn-buy-now" onclick="buyNow()">Buy Now</button>
+                      </div>
+                  </div>
+              </div>
           </div>
         </div>
-      </div>
     </sec:authorize>
 
     <script>
-      (function () {
-        window.history.pushState(null, document.title, location.href);
-        window.addEventListener("popstate", function (event) {
-          window.history.pushState(null, document.title, location.href);
+        // Existing scripts
+        (function() {
+            window.history.pushState(null, document.title, location.href);
+            window.addEventListener('popstate', function(event) {
+                window.history.pushState(null, document.title, location.href);
+            });
+        })();
+
+        document.getElementById('logout-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '${pageContext.request.contextPath}/logout';
+            
+            var csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '${_csrf.parameterName}';
+            csrfInput.value = '${_csrf.token}';
+            
+            form.appendChild(csrfInput);
+            document.body.appendChild(form);
+            form.submit();
         });
-      })();
 
-      document
-        .getElementById("logout-link")
-        .addEventListener("click", function (e) {
-          e.preventDefault();
-          var form = document.createElement("form");
-          form.method = "post";
-          form.action = "${pageContext.request.contextPath}/logout";
+        // Modal functions
+        function openProductModal(productId) {
+            // Fetch product details using AJAX
+            fetch(`/api/products/${productId}`)
+                .then(response => response.json())
+                .then(product => {
+                    document.getElementById('modalProductName').textContent = product.productName;
+                    document.getElementById('modalProductDetails').textContent = product.details;
+                    document.getElementById('modalProductPrice').textContent = `₱${product.price.toLocaleString()}`;
+                    document.getElementById('modalCreatedBy').textContent = product.createdBy;
+                    document.getElementById('modalProductImage').src = product.imageUrl;
+                    document.getElementById('modalQuantity').value = 1;
+                    document.getElementById('productModal').classList.add('active');
+                });
+        }
 
-          var csrfInput = document.createElement("input");
-          csrfInput.type = "hidden";
-          csrfInput.name = "${_csrf.parameterName}";
-          csrfInput.value = "${_csrf.token}";
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+        }
 
-          form.appendChild(csrfInput);
-          document.body.appendChild(form);
-          form.submit();
-        });
+        function incrementQuantity() {
+            const input = document.getElementById('modalQuantity');
+            const currentValue = parseInt(input.value) || 0;
+            input.value = currentValue + 1;
+        }
+
+        function decrementQuantity() {
+            const input = document.getElementById('modalQuantity');
+            const currentValue = parseInt(input.value) || 0;
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
+        }
+
+        function addToCart() {
+            const quantity = document.getElementById('modalQuantity').value;
+            // Add your cart logic here
+            closeProductModal();
+        }
+
+        function buyNow() {
+            const quantity = document.getElementById('modalQuantity').value;
+            // Add your buy now logic here
+            closeProductModal();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeProductModal();
+            }
+        }
     </script>
-  </body>
+</body>
 </html>

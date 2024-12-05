@@ -195,6 +195,7 @@
             <p>Name: ${user.name}</p>
             <p>Course: ${user.course}</p>
             <p>Address: ${user.address}</p>
+            <button class="btn text-[#F2E8C6] bg-[#AD4646] border-none hover:bg-opacity-40 hover:bg-[#AD4646] mt-4 w-full rounded-md">Edit Profile</button>
         </div>
 
         <div class="products">
