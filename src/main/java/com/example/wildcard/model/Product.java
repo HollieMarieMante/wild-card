@@ -37,7 +37,7 @@ public class Product {
     @Column(nullable =  false)
     private String CreatedBy;
 
-    @Column(nullable =  true)
+    @Column(nullable =  false)
     private int status;
 
     @Column(length = 500, name = "image_url")
