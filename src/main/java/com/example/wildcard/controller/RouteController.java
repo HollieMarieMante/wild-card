@@ -202,4 +202,28 @@ public class RouteController {
         }
         return "cart";
     }
+    @GetMapping("/usermng")
+    public String getUserList(Model model) {
+        model.addAttribute("users", userService.findAllUsers());
+        return "usermng";
+    }
+    @PostMapping("/block")
+    public String blockUser(@RequestParam int userId) {
+        User user = userService.findById(userId);
+        if (user != null) {
+            user.setRoles("BLOCK");
+            userService.save(user);
+        }
+        return "redirect:usermng";
+    }
+
+    @PostMapping("/unblock")
+    public String unblockUser(@RequestParam int userId) {
+        User user = userService.findById(userId);
+        if (user != null) {
+            user.setRoles("USER");
+            userService.save(user);
+        }
+        return "redirect:usermng";
+    }  
 }

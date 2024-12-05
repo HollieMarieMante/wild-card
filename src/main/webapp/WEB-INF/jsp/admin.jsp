@@ -115,11 +115,11 @@ prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
                   Product Listing
                 </button></a
               >
-              <a href="/cart"
+              <a href="/usermng"
                 ><button
                   class="btn bg-transparent border-[#F2E8C6] text-[#F2E8C6] hover:text-black hover:bg-opacity-10 hover:border-[#F2E8C6] rounded-3xl px-5"
                 >
-                  My Cart
+                  User
                 </button></a
               >
             </div>

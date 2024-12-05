@@ -96,4 +96,10 @@ public User createUser(User user) {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email);
     }
+    public void save(User user) {
+        userRepository.save(user);
+    }
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
 }

@@ -79,8 +79,13 @@ public class SecurityConfig {
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return (request, response, authentication) -> {
-            // Check the user's roles and redirect accordingly
+            // Check if the user has the "BLOCK" role
             if (authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_BLOCK"))) {
+                // Invalidate session and redirect to login with an error message
+                request.getSession().invalidate();
+                response.sendRedirect("/login?error=blocked");
+            } else if (authentication.getAuthorities().stream()
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_SUPER_ADMIN"))) {
                 response.sendRedirect("/admin");
             } else if (authentication.getAuthorities().stream()

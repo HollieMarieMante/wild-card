@@ -143,6 +143,12 @@
                                required 
                                class="form-input">
                                <div class="error-message">
+                                <c:if test="${param.error == 'blocked'}">
+                                    <p>Your account is currently blocked.Please contact support</p>
+                                </c:if>
+                                <c:if test="${param.error == 'true'}">
+                                    <p>Invalid username or password. Please try again.</p>
+                                </c:if>
                             </div>
                     </div>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
