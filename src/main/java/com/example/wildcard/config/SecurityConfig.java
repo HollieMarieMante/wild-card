@@ -82,7 +82,7 @@ public class SecurityConfig {
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_BLOCK"))) {
                 // Invalidate session and redirect to login with an error message
                 request.getSession().invalidate();
-                response.sendRedirect("/login?error=blocked");
+                response.sendRedirect("/access-denied");
             } else if (authentication.getAuthorities().stream()
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_SUPER_ADMIN"))) {
                 response.sendRedirect("/admin");
