@@ -4,27 +4,20 @@ import com.example.wildcard.dto.ProductRequest;
 import com.example.wildcard.model.Product;
 import com.example.wildcard.model.User;
 import com.example.wildcard.repository.ProductRepository;
-import com.example.wildcard.repository.UserRepository;
-import com.example.wildcard.service.ImageUploadService;
 import com.example.wildcard.service.ProductService;
 import com.example.wildcard.service.UserService;
-
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,14 +33,11 @@ public class ProductController {
     private UserService userService;
 
     @Autowired
-    private ImageUploadService imageUploadService;
-
-    @Autowired
     private ProductRepository productRepository;
 
     // Create a new product
     @PostMapping
-    public Product createProduct(@RequestBody ProductRequest productRequest) throws IOException {
+    public Product createProduct(@ModelAttribute ProductRequest productRequest) throws IOException {
         Product product = new Product();
         product.setProductName(productRequest.getProductName());
         product.setCategory(productRequest.getCategory());
@@ -55,21 +45,42 @@ public class ProductController {
         product.setPrice(Float.parseFloat(productRequest.getPrice()));
         product.setQuantity(Integer.parseInt(productRequest.getQuantity()));
         product.setStatus(-1);
-        // Upload the image and set the URL
-      /*   String imageUrl = imageUploadService.uploadImage(productRequest.getImageUrl());
-        product.setImageUrl(imageUrl);*/
-
+        
+        MultipartFile image = productRequest.getImage();
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = saveImage(image);
+            product.setImageUrl(imageUrl);
+        }
+        
         // Find user by email
         User user = userService.findByEmail(productRequest.getEmail());
         if (user == null) {
             throw new IllegalArgumentException("User not found with email: " + productRequest.getEmail());
         }
 
-        // Set user and createdBy fields
         product.setUser(user);
-        product.setCreatedBy(user.getName()); // Set the user's name as the createdBy field
+        product.setCreatedBy(user.getName());
 
         return productRepository.save(product);
+    }
+
+    @SuppressWarnings("null")
+    private String saveImage(MultipartFile image) throws IOException {
+        String uploadDir = "src/main/resources/static/product-images/";
+        Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        String originalFilename = StringUtils.cleanPath(image.getOriginalFilename());
+        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String fileName = System.currentTimeMillis() + fileExtension;
+
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(image.getInputStream(), filePath);
+
+        return "/product-images/" + fileName;
     }
 
     // Update an existing product
@@ -95,7 +106,6 @@ public class ProductController {
         List<Product> products = productService.getProductsByStatus(status);
         return ResponseEntity.ok(products);
     }
-
 
     //to change status
     @PutMapping("/{productId}/status")

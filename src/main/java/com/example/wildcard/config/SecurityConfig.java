@@ -10,11 +10,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.example.wildcard.service.UserService;
 
@@ -30,7 +28,7 @@ public class SecurityConfig {
                 .requestMatchers("/").permitAll()
                 .requestMatchers(HttpMethod.GET, "/products").permitAll()
                 .requestMatchers(HttpMethod.POST, "/products").permitAll() 
-                .requestMatchers("/css/**", "/assets/**", "/js/**", "/WEB-INF/jsp/**").permitAll()
+                .requestMatchers("/css/**", "/assets/**", "/product-images/**", "/js/**", "/WEB-INF/jsp/**").permitAll()
                 .requestMatchers("/signup", "/forgetpass", "/users", "/products").permitAll()
                 .requestMatchers("/login", "/products", "/home").permitAll()
                 .anyRequest().authenticated()

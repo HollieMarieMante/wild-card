@@ -85,7 +85,7 @@
         </div>
 
         <div class="flex justify-center w-[80%] h-[80%] bg-[#AD4646] border-2 border-gray-800 bg-opacity-50 shadow-lg mt-6 rounded-3xl">
-            <form id="productForm" class="grid grid-cols-2 w-[80%] h-[90%]">
+            <form id="productForm" class="grid grid-cols-2 w-[80%] h-[90%]" enctype="multipart/form-data">
                 
                 <div class="col-span-1">
                     <div class="form-control mt-10 w-full max-w-xs">
@@ -133,12 +133,10 @@
         const dropZone = document.getElementById('drop-zone');
         const fileUpload = document.getElementById('file-upload');
         const fileName = document.getElementById('file-name');
-        const filePath = document.getElementById('file-path');
         const imagePreview = document.getElementById('image-preview');
         const previewImage = document.getElementById('preview-image');
-        
-        // Store the full path globally so it's accessible in form submission
-        let fullFilePath = '';
+
+        let uploadedFile = null; // Store the uploaded file
 
         // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -189,54 +187,47 @@
             if (files.length > 0) {
                 const file = files[0];
                 if (file.type.startsWith('image/')) {
-                    uploadFile(file);
+                    uploadedFile = file; // Store the file for upload
+                    if (fileName) fileName.textContent = file.name;
+
+                    // Preview image
+                    if (previewImage && imagePreview) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            previewImage.src = e.target.result;
+                            imagePreview.classList.remove('hidden');
+                        }
+                        reader.readAsDataURL(file);
+                    }
                 } else {
                     alert('Please select an image file.');
                 }
             }
         }
 
-        function uploadFile(file) {
-            if (fileName) fileName.textContent = file.name;
-            
-            // Store the full path
-            fullFilePath = file.webkitRelativePath || file.name;
-            if (filePath) filePath.value = fullFilePath;
-
-            // Preview image
-            if (previewImage && imagePreview) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    imagePreview.classList.remove('hidden');
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
         const productForm = document.getElementById('productForm');
         if (productForm) {
-            productForm.addEventListener('submit', async function(e) {
+            productForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const form = e.target;
-                
+
                 try {
-                    const formData = {
-                        productName: form.productName.value,
-                        category: form.category.value,
-                        price: form.price.value,
-                        details: form.details.value,
-                        email: form.email.value,
-                      //  imageUrl: "C:/Users/Khent Harold/Downloads/asdf.png", // Using the stored full path
-                        quantity: form.quantity.value
-                    };
-                    console.log(formData);
+                    const formData = new FormData();
+                    formData.append('productName', form.productName.value);
+                    formData.append('category', form.category.value);
+                    formData.append('price', form.price.value);
+                    formData.append('details', form.details.value);
+                    formData.append('email', form.email.value);
+                    formData.append('quantity', form.quantity.value);
+                    if (uploadedFile) {
+                        formData.append('image', uploadedFile); // Append the image file
+                    }
+
+                    console.log(formData.entries);
+
                     const response = await fetch('/products', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(formData)
+                        body: formData // No need to set `Content-Type`; browser handles it
                     });
 
                     if (!response.ok) {
@@ -245,7 +236,7 @@
 
                     const data = await response.json();
                     console.log('Product created:', data);
-                    
+
                     // Redirect to main page on success
                     window.location.href = '/main';
 
@@ -254,7 +245,7 @@
                     alert(error.message);
                 }
             });
-        } 
+        }
     });
         </script>
 </sec:authorize>
