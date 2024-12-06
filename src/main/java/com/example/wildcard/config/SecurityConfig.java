@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/main", true)
-                .failureUrl("/login?error")
+                .failureUrl("/error")
                 .successHandler(authenticationSuccessHandler())
                 .permitAll()
             )

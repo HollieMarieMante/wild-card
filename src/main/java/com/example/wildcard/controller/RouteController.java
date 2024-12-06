@@ -105,6 +105,16 @@ public class RouteController {
         return "admin";
     }
 
+    @GetMapping("/access-denied")
+    public String accessDeniedPage() {   
+        return "access-denied";
+    }
+
+    @GetMapping("/error")
+    public String errorPage() {   
+        return "error";
+    }
+
 
 
     @GetMapping("/add-product")

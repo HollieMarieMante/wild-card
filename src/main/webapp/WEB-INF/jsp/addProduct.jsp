@@ -136,15 +136,13 @@
         const imagePreview = document.getElementById('image-preview');
         const previewImage = document.getElementById('preview-image');
 
-        let uploadedFile = null; // Store the uploaded file
+        let uploadedFile = null;
 
-        // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
             document.body.addEventListener(eventName, preventDefaults, false);
         });
 
-        // Highlight drop zone when item is dragged over it
         ['dragenter', 'dragover'].forEach(eventName => {
             dropZone.addEventListener(eventName, highlight, false);
         });
@@ -153,10 +151,8 @@
             dropZone.addEventListener(eventName, unhighlight, false);
         });
 
-        // Handle dropped files
         dropZone.addEventListener('drop', handleDrop, false);
 
-        // Handle selected files
         fileUpload.addEventListener('change', handleFiles, false);
 
         dropZone.addEventListener('click', () => fileUpload.click());
@@ -187,10 +183,9 @@
             if (files.length > 0) {
                 const file = files[0];
                 if (file.type.startsWith('image/')) {
-                    uploadedFile = file; // Store the file for upload
+                    uploadedFile = file;
                     if (fileName) fileName.textContent = file.name;
 
-                    // Preview image
                     if (previewImage && imagePreview) {
                         const reader = new FileReader();
                         reader.onload = function (e) {
@@ -220,14 +215,14 @@
                     formData.append('email', form.email.value);
                     formData.append('quantity', form.quantity.value);
                     if (uploadedFile) {
-                        formData.append('image', uploadedFile); // Append the image file
+                        formData.append('image', uploadedFile);
                     }
 
                     console.log(formData.entries);
 
                     const response = await fetch('/products', {
                         method: 'POST',
-                        body: formData // No need to set `Content-Type`; browser handles it
+                        body: formData
                     });
 
                     if (!response.ok) {
