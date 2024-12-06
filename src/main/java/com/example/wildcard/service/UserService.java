@@ -63,6 +63,8 @@ public User createUser(User user) {
     public User updateUser(int userId, User userDetails) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        
+        String encryptedPassword = passwordEncoder.encode(userDetails.getPassword());
 
         existingUser.setName(userDetails.getName());
         existingUser.setCourse(userDetails.getCourse());
@@ -70,7 +72,7 @@ public User createUser(User user) {
         existingUser.setEmail(userDetails.getEmail());
         existingUser.setMobileNumber(userDetails.getMobileNumber());
         existingUser.setAddress(userDetails.getAddress());
-        // Note: Password update should be handled separately with proper encryption
+        existingUser.setPassword(encryptedPassword);
 
         return userRepository.save(existingUser);
     }

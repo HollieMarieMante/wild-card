@@ -35,7 +35,7 @@ public class RouteController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/landing")
+    @GetMapping("/")
     public String landingPage() {
         return "home";
     }

@@ -53,168 +53,168 @@
 
         /* Modal styles */
         .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
-}
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+        }
 
-.modal.active {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.modal-content {
-    background: #E8E2D7;
-    padding: 40px;
-    border-radius: 12px;
-    width: 1000px;
-    display: grid;
-    grid-template-columns: 1fr 1px 1fr;
-    gap: 40px;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+        .modal-content {
+            background: #E8E2D7;
+            padding: 40px;
+            border-radius: 12px;
+            width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+            gap: 40px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-.modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 30px;
-    height: 30px;
-    background: #AD4646;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 20px;
-    z-index: 10;
-}
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 30px;
+            height: 30px;
+            background: #AD4646;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+        }
 
-.modal-close:hover {
-    background: #963e3e;
-}
+        .modal-close:hover {
+            background: #963e3e;
+        }
 
-.product-info {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-.product-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+        .product-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-.product-header h3 {
-    font-size: 28px;
-    color: #333;
-    font-weight: 500;
-}
+        .product-header h3 {
+            font-size: 28px;
+            color: #333;
+            font-weight: 500;
+        }
 
-.info-label {
-    color: #666;
-    font-size: 0.95em;
-    margin-bottom: 4px;
-}
+        .info-label {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 4px;
+        }
 
-.info-value {
-    font-size: 1.1em;
-    color: #333;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #ccc;
-}
+        .info-value {
+            font-size: 1.1em;
+            color: #333;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ccc;
+        }
 
-.divider {
-    width: 1px;
-    background-color: #ccc;
-    height: auto;
-    margin: 0;
-}
+        .divider {
+            width: 1px;
+            background-color: #ccc;
+            height: auto;
+            margin: 0;
+        }
 
-.product-image-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
+        .product-image-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
 
-.product-image {
-    width: 400px;
-    height: 300px;
-    border: 2px solid #AD4646;
-    border-radius: 8px;
-    overflow: hidden;
-}
+        .product-image {
+            width: 400px;
+            height: 300px;
+            border: 2px solid #AD4646;
+            border-radius: 8px;
+            overflow: hidden;
+        }
 
-.product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.quantity-control {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-}
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-.quantity-control button {
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: #AD4646;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px;
-}
+        .quantity-control button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #AD4646;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+        }
 
-.quantity-control input {
-    width: 60px;
-    height: 32px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
+        .quantity-control input {
+            width: 60px;
+            height: 32px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-.action-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
 
-.btn-add-cart {
-    padding: 12px 24px;
-    background: #AD4646;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    min-width: 150px;
-}
+        .btn-add-cart {
+            padding: 12px 24px;
+            background: #AD4646;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            min-width: 150px;
+        }
 
-.btn-buy-now {
-    padding: 12px 24px;
-    background: #2B5C2B;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    min-width: 150px;
-}
+        .btn-buy-now {
+            padding: 12px 24px;
+            background: #2B5C2B;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            min-width: 150px;
+        }
     </style>
     <title>Wild Cart</title>
 </head>
@@ -365,6 +365,7 @@
                               <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
                           </svg>
                           <h3>Product Overview</h3>
+                          <button class="modal-close" onclick="closeProductModal()">&times;</button>
                       </div>
                       <div>
                           <div class="info-label">Product Name:</div>
@@ -433,7 +434,7 @@
         // Modal functions
         function openProductModal(productId) {
             // Fetch product details using AJAX
-            fetch(`/api/products/${productId}`)
+            fetch("/products/" + productId)
                 .then(response => response.json())
                 .then(product => {
                     document.getElementById('modalProductName').textContent = product.productName;

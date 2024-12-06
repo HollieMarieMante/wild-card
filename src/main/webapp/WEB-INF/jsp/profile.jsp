@@ -152,6 +152,57 @@
             color: white;
             flex: 1;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #E8E2D7;
+            padding: 40px;
+            border-radius: 12px;
+            width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+            gap: 40px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 30px;
+            height: 30px;
+            background: #AD4646;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: #963e3e;
+        }
     </style>
 </head>
 
@@ -195,7 +246,7 @@
             <p>Name: ${user.name}</p>
             <p>Course: ${user.course}</p>
             <p>Address: ${user.address}</p>
-            <button class="btn text-[#F2E8C6] bg-[#AD4646] border-none hover:bg-opacity-40 hover:bg-[#AD4646] mt-4 w-full rounded-md">Edit Profile</button>
+            <button onclick="openEditProfileModal()" class="btn text-[#F2E8C6] bg-[#AD4646] border-none hover:bg-opacity-40 hover:bg-[#AD4646] mt-4 w-full rounded-md">Edit Profile</button>
         </div>
 
         <div class="products">
@@ -253,7 +304,7 @@
                                                 </c:choose>
                                             </p>
                                         </div>
-                                        <button class="btn btn-primary w-20 p-0 bg-opacity-45"><p class="text-sm">Edit</button>
+                                        <button onclick="openProductModal(${product.productId})" class="btn btn-primary w-20 p-0 bg-opacity-45"><p class="text-sm">Edit</button>
                                     </div>
                                 </div>
                             </div>
@@ -263,6 +314,48 @@
             </div>
         </div>
 
+        <!-- Edit Profile Modal -->
+        <div id="editProfile" class="hidden justify-center items-center fixed inset-0 w-full h-full bg-black bg-opacity-50 z-[9999]">
+            <div class="bg-white flex rounded-lg w-[46%]">
+                <form class="w-full flex h-full justify-center">
+                    <div class="flex flex-col w-[90%] h-full py-5">
+                        <div class="flex">
+                                <svg width="30" height="30" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
+                                </svg>
+                            <h1 class="font-bold text-xl pb-3 ml-2">Edit Profile</h1>
+                            <button class="modal-close" onclick="closeEditProfileModal()">&times;</button>
+                        </div>
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${user.name}"/>
+                        </div>
+
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter old password"/>
+
+                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new password"/>
+                        </div>
+
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${user.studentId}"/>
+
+                            <input type="email" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${user.email}"/>
+                        </div>
+
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${user.address}"/>
+                        </div>
+
+                        <div class="flex w-full justify-end pt-3">
+                            <button onclick="updateProfile(${user.userId})" class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]">Update profile</button>
+                        </div>
+                    
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Product View Modal -->
         <div id="productModal" class="modal">
             <div class="modal-content">
               <button class="modal-close" onclick="closeProductModal()">&times;</button>
@@ -300,7 +393,7 @@
                 
                 <div class="product-image-section">
                     <div class="product-image">
-                        <img id="modalProductImage" src="" alt="Product Image">
+                        <img id="modalProductImage" alt="Product Image">
                     </div>
                     <div class="action-buttons">
                         <button class="btn-add-cart" onclick="addToCart()">Add to Cart</button>
@@ -312,9 +405,10 @@
     </div>
 </sec:authorize>
 <script>
-    function openProductModal(productId) {
+        function openProductModal(productId) {
             // Fetch product details using AJAX
-            fetch(`/api/products/${productId}`)
+            console.log(productId)
+            fetch("/products/" + productId)
                 .then(response => response.json())
                 .then(product => {
                     document.getElementById('modalProductName').textContent = product.productName;
@@ -327,33 +421,46 @@
                 });
         }
 
+        function updateProfile(profileId) {
+
+        }
+
         function closeProductModal() {
             document.getElementById('productModal').classList.remove('active');
         }
 
-        
-    (function() {
-        window.history.pushState(null, document.title, location.href);
-        window.addEventListener('popstate', function(event) {
-            window.history.pushState(null, document.title, location.href);
-        });
-    })();
+        function openEditProfileModal(){
+            document.getElementById('editProfile').classList.remove('hidden');
+            document.getElementById('editProfile').classList.add('flex');
+        }
 
-    document.getElementById('logout-link').addEventListener('click', function(e) {
-    e.preventDefault();
-    var form = document.createElement('form');
-    form.method = 'post';
-    form.action = '${pageContext.request.contextPath}/logout';
-    
-    var csrfInput = document.createElement('input');
-    csrfInput.type = 'hidden';
-    csrfInput.name = '${_csrf.parameterName}';
-    csrfInput.value = '${_csrf.token}';
-    
-    form.appendChild(csrfInput);
-    document.body.appendChild(form);
-    form.submit();
-});
+        function closeEditProfileModal(){
+            document.getElementById('editProfile').classList.add('hidden');
+        }
+
+        
+        (function() {
+            window.history.pushState(null, document.title, location.href);
+            window.addEventListener('popstate', function(event) {
+                window.history.pushState(null, document.title, location.href);
+            });
+        })();
+
+        document.getElementById('logout-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        var form = document.createElement('form');
+        form.method = 'post';
+        form.action = '${pageContext.request.contextPath}/logout';
+        
+        var csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '${_csrf.parameterName}';
+        csrfInput.value = '${_csrf.token}';
+        
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+    });
 </script>
 </body>
 </html>

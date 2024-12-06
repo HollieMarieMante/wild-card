@@ -31,6 +31,8 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/assets/**", "/product-images/**", "/js/**", "/WEB-INF/jsp/**").permitAll()
                 .requestMatchers("/signup", "/forgetpass", "/users", "/products").permitAll()
                 .requestMatchers("/login", "/products", "/home").permitAll()
+                .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/products/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
