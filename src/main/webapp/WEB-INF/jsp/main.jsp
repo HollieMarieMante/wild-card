@@ -227,7 +227,7 @@
           >
             <details class="dropdown">
               <summary
-                class="btn m-1 bg-transparent hover:bg-transparent border-none hover:border-none shadow-none flex items-center cursor-pointer"
+                class="btn w-64 justify-start m-1 bg-transparent hover:bg-transparent border-none hover:border-none shadow-none flex items-center cursor-pointer"
               >
                 <svg
                   width="30"

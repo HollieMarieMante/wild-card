@@ -212,6 +212,14 @@ public class RouteController {
     @GetMapping("/usermng")
     public String getUserList(Model model) {
         model.addAttribute("users", userService.findAllUsers());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            String username = userDetails.getUsername();
+            
+            User currentUser = userService.findByEmail(username);
+            model.addAttribute("user", currentUser);
+        }
         return "usermng";
     }
     @PostMapping("/block")
