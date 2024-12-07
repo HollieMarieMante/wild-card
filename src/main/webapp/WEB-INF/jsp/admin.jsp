@@ -91,11 +91,6 @@ prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
               <ul
                 class="menu dropdown-content bg-white rounded-md w-52 shadow-lg cursor-pointer"
               >
-                <li class="hover:bg-slate-200 first:rounded-t-md">
-                  <a href="/profile" class="block px-5 py-3 text-black text-sm"
-                    >Profile</a
-                  >
-                </li>
                 <hr class="border-gray-200" />
                 <li class="hover:bg-slate-200 last:rounded-b-md">
                   <a
@@ -108,13 +103,6 @@ prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
             </details>
             <div></div>
             <div>
-              <a href="/main"
-                ><button
-                  class="btn bg-transparent border-none text-[#F2E8C6] hover:text-white shadow-none hover:bg-opacity-10 rounded-3xl px-5"
-                >
-                  Product Listing
-                </button></a
-              >
               <a href="/usermng"
                 ><button
                   class="btn bg-transparent border-[#F2E8C6] text-[#F2E8C6] hover:text-black hover:bg-opacity-10 hover:border-[#F2E8C6] rounded-3xl px-5"
@@ -203,7 +191,7 @@ prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
                               href="/view-productadmin?id=${product.productId}"
                             >
                               <button class="btn btn-primary bg-opacity-45">
-                                Learn now!
+                                Review
                               </button>
                             </a>
                           </div>

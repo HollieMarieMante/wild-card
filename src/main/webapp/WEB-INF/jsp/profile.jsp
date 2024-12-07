@@ -356,52 +356,60 @@
         </div>
 
         <!-- Product View Modal -->
-        <div id="productModal" class="modal">
-            <div class="modal-content">
-              <button class="modal-close" onclick="closeProductModal()">&times;</button>
-                <div class="product-info">
-                    <div class="product-header">
-                        <svg width="30" height="30" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
-                        </svg>
-                        <h3>Product Overview</h3>
-                    </div>
-                    <div>
-                        <div class="info-label">Product Name:</div>
-                        <div id="modalProductName" class="info-value"></div>
-                    </div>
-                    <div>
-                        <div class="info-label">Product Details:</div>
-                        <div id="modalProductDetails" class="info-value"></div>
-                    </div>
-                    <div>
-                        <div class="info-label">Product Price:</div>
-                        <div id="modalProductPrice" class="info-value"></div>
-                    </div>
-                    <div>
-                        <div class="info-label">Created By:</div>
-                        <div id="modalCreatedBy" class="info-value"></div>
-                    </div>
-                    <div class="quantity-control">
-                        <button onclick="decrementQuantity()">-</button>
-                        <input type="number" id="modalQuantity" value="1" min="1" readonly>
-                        <button onclick="incrementQuantity()">+</button>
-                    </div>
+<div id="productModal" class="modal">
+    <div class="modal-content bg-[#E8E2D7] p-8 rounded-lg w-[800px] grid grid-cols-2 gap-8 relative">
+        <button class="modal-close absolute top-4 right-4 w-8 h-8 bg-[#AD4646] text-white border-none rounded-full flex items-center justify-center cursor-pointer text-xl hover:bg-[#963e3e]" onclick="closeProductModal()">&times;</button>
+        
+        <!-- Left side - Product Info -->
+        <div class="product-info">
+            <div class="product-header flex items-center mb-6">
+                <svg width="50" height="50" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
+                </svg>
+                <h3 class="text-xl font-bold ml-2 text-black">Product Overview</h3>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <div class="text-gray-600 font-medium mb-1">Product Name:</div>
+                    <input id="modalProductName" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${product.productName}"/>
                 </div>
                 
-                <div class="divider"></div>
+                <div>
+                    <div class="text-gray-600 font-medium mb-1">Product Details:</div>
+                    <input id="modalProductDetails" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${product.details}"/>
+                </div>
                 
-                <div class="product-image-section">
-                    <div class="product-image">
-                        <img id="modalProductImage" alt="Product Image">
-                    </div>
-                    <div class="action-buttons">
-                        <button class="btn-add-cart" onclick="addToCart()">Add to Cart</button>
-                        <button class="btn-buy-now" onclick="buyNow()">Buy Now</button>
-                    </div>
+                <div>
+                    <div class="text-gray-600 font-medium mb-1">Product Price:</div>
+                    <input id="modalProductPrice" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter New Price"/>
+                </div>
+                
+                <div>
+                    <div class="text-gray-600 font-medium mb-1">Created By:</div>
+                    <div id="modalCreatedBy" class="text-black text-lg "></div>
+                </div>
+
+                <div class="flex items-center space-x-4 mt-6">
+                    <button onclick="decrementQuantity()" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">-</button>
+                    <input type="number" id="modalQuantity" value="1" min="1" readonly class="w-16 h-8 text-center border rounded-md">
+                    <button onclick="incrementQuantity()" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">+</button>
                 </div>
             </div>
         </div>
+
+        <!-- Right side - Product Image -->
+        <div class="product-image-section flex flex-col">
+            <div class="bg-gray-100 rounded-lg overflow-hidden mb-4 h-[300px]">
+                <img id="modalProductImage" alt="Product Image" class="w-full h-full object-cover">
+            </div>
+            <div class="flex justify-end gap-4 mt-20">
+                <button class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="addToCart()">Edit Pic</button>
+                <button class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="buyNow()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
     </div>
 </sec:authorize>
 <script>
