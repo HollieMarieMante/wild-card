@@ -287,7 +287,7 @@
                                             <h1 class="text-white font-bold">
                                                 ${product.productName.length() > 8 ? product.productName.substring(0, 8).concat('...') : product.productName}
                                             </h1>
-                                            <p>$<fmt:formatNumber value="${product.price}" maxFractionDigits="0"/></p>
+                                            <p>&#8369;<fmt:formatNumber value="${product.price}" maxFractionDigits="0"/></p>
                                             <p>
                                                 <c:choose>
                                                     <c:when test="${product.status == -1}">
@@ -305,9 +305,68 @@
                                                 </c:choose>
                                             </p>
                                         </div>
-                                        <button onclick="openProductModal(${product.productId})" class="btn btn-primary w-20 p-0 bg-opacity-45"><p class="text-sm">Edit</button>
+                                        <button onclick="openProductModal()" class="btn btn-primary w-20 p-0 bg-opacity-45"><p class="text-sm">Edit</button>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Product View Modal -->
+                            <div id="productModal" class="modal">
+                                <form id="editProductForm">
+                                    <div class="modal-content bg-[#E8E2D7] p-8 rounded-lg w-[800px] grid grid-cols-2 gap-8 relative">
+                                        <button type="button" class="modal-close absolute top-4 right-4 w-8 h-8 bg-[#AD4646] text-white border-none rounded-full flex items-center justify-center cursor-pointer text-xl hover:bg-[#963e3e]" onclick="closeProductModal()">&times;</button>
+                                        
+                                            <!-- Left side - Product Info -->
+                                            <div class="product-info">
+                                                <div class="product-header flex items-center mb-6">
+                                                    <svg width="50" height="50" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
+                                                    </svg>
+                                                    <h3 class="text-xl font-bold ml-2 text-black">Product Overview</h3>
+                                                </div>
+                                                    <div class="space-y-4">
+                                                        <div>
+                                                            <div class="text-gray-600 font-medium mb-1">Product Name:</div>
+                                                            <input type="text" value="${product.productName}" id="modalProductName" class="text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new product name"/>
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <div class="text-gray-600 font-medium mb-1">Product Details:</div>
+                                                            <input type="text" value="${product.details}" id="modalProductDetails" class="text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new product details"/>
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <div class="text-gray-600 font-medium mb-1">Product Price:</div>
+                                                            <input type="text" value="${product.price}" id="modalProductPrice" class="text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter New Price"/>
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <div class="text-gray-600 font-medium mb-1">Created By:</div>
+                                                            <div id="modalCreatedBy" class="text-black text-lg"><p>${product.user.name}</p></div>
+                                                        </div>
+
+                                                        <div class="flex items-center space-x-4 mt-6">
+                                                            <button onclick="decrementQuantity()" type="button" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">-</button>
+                                                            <input type="text" id="modalQuantity" value="1" min="1" class="w-16 h-8 text-center border rounded-md">
+                                                            <button onclick="incrementQuantity()" type="button" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">+</button>
+                                                            <input type="text" name="productId" class="hidden" value="${product.productId}" />
+                                                        </div>
+                                                    </div>
+                                            </div>
+
+                                            <!-- Right side - Product Image -->
+                                            <div class="product-image-section flex flex-col">
+                                                <div class="bg-gray-100 rounded-lg overflow-hidden mb-4 h-[300px]">
+                                                    <img src="${product.imageUrl}" id="modalProductImage" alt="Product Image" class="w-full h-full object-cover">
+                                                </div>
+                                                <div class="flex justify-end gap-4 mt-20">
+                                                    <button type="button" class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="chooseImage()">Edit Pic</button>
+                                                    <button type="submit" class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]">Update</button>
+                                                    <button type="button" class="btn bg-[#AD4646] text-red-600 bg-opacity-50 border-red-600 hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="deleteProduct(${product.productId})">Delete</button>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </form>
                             </div>
                         </c:forEach>
                     </c:otherwise>
@@ -383,66 +442,105 @@
                 </form>
             </div>
         </div>
-
-        <!-- Product View Modal -->
-        <div id="productModal" class="modal">
-            <div class="modal-content bg-[#E8E2D7] p-8 rounded-lg w-[800px] grid grid-cols-2 gap-8 relative">
-                <button type="button" class="modal-close absolute top-4 right-4 w-8 h-8 bg-[#AD4646] text-white border-none rounded-full flex items-center justify-center cursor-pointer text-xl hover:bg-[#963e3e]" onclick="closeProductModal()">&times;</button>
-                
-                <!-- Left side - Product Info -->
-                <div class="product-info">
-                    <div class="product-header flex items-center mb-6">
-                        <svg width="50" height="50" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
-                        </svg>
-                        <h3 class="text-xl font-bold ml-2 text-black">Product Overview</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <div class="text-gray-600 font-medium mb-1">Product Name:</div>
-                            <input id="modalProductName" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${product.productName}"/>
-                        </div>
-                        
-                        <div>
-                            <div class="text-gray-600 font-medium mb-1">Product Details:</div>
-                            <input id="modalProductDetails" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${product.details}"/>
-                        </div>
-                        
-                        <div>
-                            <div class="text-gray-600 font-medium mb-1">Product Price:</div>
-                            <input id="modalProductPrice" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter New Price"/>
-                        </div>
-                        
-                        <div>
-                            <div class="text-gray-600 font-medium mb-1">Created By:</div>
-                            <div id="modalCreatedBy" class="text-black text-lg "></div>
-                        </div>
-
-                        <div class="flex items-center space-x-4 mt-6">
-                            <button onclick="decrementQuantity()" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">-</button>
-                            <input type="number" id="modalQuantity" value="1" min="1" readonly class="w-16 h-8 text-center border rounded-md">
-                            <button onclick="incrementQuantity()" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right side - Product Image -->
-                <div class="product-image-section flex flex-col">
-                    <div class="bg-gray-100 rounded-lg overflow-hidden mb-4 h-[300px]">
-                        <img id="modalProductImage" alt="Product Image" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex justify-end gap-4 mt-20">
-                        <button class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="addToCart()">Edit Pic</button>
-                        <button class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="buyNow()">Update</button>
-                        <button class="btn bg-[#AD4646] text-red-600 bg-opacity-50 border-red-600 hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="buyNow()">Delete</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
+            document.getElementById('logout-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '${pageContext.request.contextPath}/logout';
+                
+                var csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '${_csrf.parameterName}';
+                csrfInput.value = '${_csrf.token}';
+                
+                form.appendChild(csrfInput);
+                document.body.appendChild(form);
+                form.submit();
+            });
+            
+            function incrementQuantity() {
+                const input = document.getElementById('modalQuantity');
+                const currentValue = parseInt(input.value) || 0;
+                input.value = currentValue + 1;
+            }
+
+            function decrementQuantity() {
+                const input = document.getElementById('modalQuantity');
+                const currentValue = parseInt(input.value) || 0;
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+            }
+
+            async function deleteProduct(productId){
+                await fetch('/products/' + productId, {
+                    method: 'DELETE'
+                })
+                alert("Product deleted successfully!");
+                window.location.href = '/profile';
+            }
+
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.style.display = 'none';
+            fileInput.classList.add = "hidden";
+            document.body.appendChild(fileInput);
+
+            let selectedFile = null; 
+            
+            function chooseImage() {
+                event.preventDefault();
+                fileInput.click();
+            }
+
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if(file){
+                    selectedFile = file;
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const modalProductImage = document.getElementById('modalProductImage');
+                        modalProductImage.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            })
+
+            document.getElementById('editProductForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const form = e.target;
+                try{
+                    const formData = new FormData();
+                    formData.append('productId', form.productId.value);
+                    formData.append('productName', form.modalProductName.value);
+                    formData.append('details', form.modalProductDetails.value);
+                    formData.append('price', form.modalProductPrice.value);
+                    formData.append('quantity', form.modalQuantity.value);
+
+                    if(selectedFile) {
+                        formData.append('image', selectedFile);
+                    }
+                        
+                    const response = await fetch('/products/updateproduct', {
+                        method: 'PUT',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update product. Please try again.');
+                    }
+                    alert("Product details updated successfully!");
+                    window.location.href = '/profile';
+                }catch (error) {
+                    console.error(error);
+                    alert(error.message);
+                }
+            })
+
             document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const form = e.target;
@@ -455,7 +553,7 @@
                     formData.append('email', form.email.value);
                     formData.append('mobileNumber', form.mobileNumber.value);
                     formData.append('address', form.address.value);
-                        
+
                     const response = await fetch('/users/update', {
                         method: 'PUT',
                         body: formData
@@ -502,24 +600,8 @@
                 }
             })
 
-            function openProductModal(productId) {
-                // Fetch product details using AJAX
-                console.log(productId)
-                fetch("/products/" + productId)
-                    .then(response => response.json())
-                    .then(product => {
-                        document.getElementById('modalProductName').textContent = product.productName;
-                        document.getElementById('modalProductDetails').textContent = product.details;
-                        document.getElementById('modalProductPrice').textContent = `₱${product.price.toLocaleString()}`;
-                        document.getElementById('modalCreatedBy').textContent = product.createdBy;
-                        document.getElementById('modalProductImage').src = product.imageUrl;
-                        document.getElementById('modalQuantity').value = 1;
-                        document.getElementById('productModal').classList.add('active');
-                    });
-            }
-
-            function updateProfile(profileId) {
-                
+            function openProductModal() {
+                document.getElementById('productModal').classList.add('active');
             }
 
             function closeProductModal() {
@@ -551,22 +633,6 @@
                     window.history.pushState(null, document.title, location.href);
                 });
             })();
-
-            document.getElementById('logout-link').addEventListener('click', function(e) {
-                e.preventDefault();
-                var form = document.createElement('form');
-                form.method = 'post';
-                form.action = '${pageContext.request.contextPath}/logout';
-                
-                var csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = '${_csrf.parameterName}';
-                csrfInput.value = '${_csrf.token}';
-                
-                form.appendChild(csrfInput);
-                document.body.appendChild(form);
-                form.submit();
-            });
     </script>
 </sec:authorize>
 </body>

@@ -3,31 +3,21 @@ package com.example.wildcard.service;
 import com.example.wildcard.model.Product;
 import com.example.wildcard.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
 public class ProductService {
     @Autowired
     private ProductRepository productRepository;
-
-    // Update an existing product
-    public Product updateProduct(int productId, Product updatedProduct, String filePath) throws IOException {
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        // Update product details
-        existingProduct.setProductName(updatedProduct.getProductName());
-        existingProduct.setCategory(updatedProduct.getCategory());
-        existingProduct.setPrice(updatedProduct.getPrice());
-        existingProduct.setDetails(updatedProduct.getDetails());
-
-        return productRepository.save(existingProduct);
-    }
 
     // Get all products
     public List<Product> getAllProducts() {
@@ -43,7 +33,7 @@ public class ProductService {
     public void deleteProduct(int productId) throws IOException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-
+        deleteImage(product.getImageUrl());
         productRepository.deleteById(productId);
     }
     @Transactional
@@ -60,6 +50,66 @@ public class ProductService {
             System.err.println("Error updating product status: " + e.getMessage());
             return 0; // Indicate failure
         }
+    }
+
+    public String updateProduct(int productId, Product newProduct, MultipartFile newImage){
+        try{
+            Product existingProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+                existingProduct.setProductName(newProduct.getProductName());
+                existingProduct.setDetails(newProduct.getDetails());
+                existingProduct.setPrice(newProduct.getPrice());
+                existingProduct.setQuantity(newProduct.getQuantity());
+                if(newImage == null){
+                    productRepository.save(existingProduct);
+                    return "Product details updated successfully!";
+                }
+                
+                System.out.println("Product image url" + existingProduct.getImageUrl());
+                boolean isDeleted = deleteImage(existingProduct.getImageUrl());
+                if(isDeleted){
+                    String newImageUrl = saveImage(newImage);
+                    existingProduct.setImageUrl(newImageUrl);
+                    productRepository.save(existingProduct);
+                    return "Product details and image updated successfully!";
+                }else{
+                    return "Old image wasn't deleted";
+                }
+        }catch(Exception e){
+            return e.getMessage();
+        }
+    }
+
+    private boolean deleteImage(String imageDir) throws IOException{
+        System.out.println("I was called!");
+        String directory = "src/main/resources/static";
+        Path filePath = Paths.get(directory + imageDir);
+
+        if(Files.exists(filePath)) {
+            Files.delete(filePath);
+            return true;
+        }
+
+        return false;
+    }
+
+    private String saveImage(MultipartFile image) throws IOException {
+        String uploadDir = "src/main/resources/static/product-images/";
+        Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        String originalFilename = StringUtils.cleanPath(image.getOriginalFilename());
+        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String fileName = System.currentTimeMillis() + fileExtension;
+
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(image.getInputStream(), filePath);
+
+        return "/product-images/" + fileName;
     }
 
     // Additional custom methods based on repository

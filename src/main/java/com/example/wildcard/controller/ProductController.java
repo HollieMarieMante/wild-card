@@ -1,6 +1,7 @@
 package com.example.wildcard.controller;
 
 import com.example.wildcard.dto.ProductRequest;
+import com.example.wildcard.dto.UpdateProductRequest;
 import com.example.wildcard.model.Product;
 import com.example.wildcard.model.User;
 import com.example.wildcard.repository.ProductRepository;
@@ -10,7 +11,6 @@ import com.example.wildcard.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
@@ -90,14 +90,16 @@ public class ProductController {
     }
 
     // Update an existing product
-    @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(
-            @PathVariable int productId, 
-            @ModelAttribute Product product, 
-            @RequestParam String filePath
-    ) throws IOException {
-        Product updatedProduct = productService.updateProduct(productId, product, filePath);
-        return ResponseEntity.ok(updatedProduct);
+    @PutMapping("/updateproduct")
+    public ResponseEntity<String> updateProduct(@ModelAttribute UpdateProductRequest updateProductRequest){
+        Product product = new Product();
+
+        product.setProductName(updateProductRequest.getProductName());
+        product.setDetails(updateProductRequest.getDetails());
+        product.setPrice(Float.parseFloat(updateProductRequest.getPrice()));
+        product.setQuantity(Integer.parseInt(updateProductRequest.getQuantity()));
+        String message = productService.updateProduct(Integer.parseInt(updateProductRequest.getProductId()), product, updateProductRequest.getImage());
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     // Get all products
