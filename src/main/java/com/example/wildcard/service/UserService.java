@@ -2,12 +2,23 @@ package com.example.wildcard.service;
 
 import com.example.wildcard.model.User;
 import com.example.wildcard.repository.UserRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,19 +73,45 @@ public User createUser(User user) {
     // Update user
     public User updateUser(int userId, User userDetails) {
         User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        
-        String encryptedPassword = passwordEncoder.encode(userDetails.getPassword());
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userDetails.getUserId()));
 
         existingUser.setName(userDetails.getName());
         existingUser.setCourse(userDetails.getCourse());
         existingUser.setStudentId(userDetails.getStudentId());
-        existingUser.setEmail(userDetails.getEmail());
         existingUser.setMobileNumber(userDetails.getMobileNumber());
         existingUser.setAddress(userDetails.getAddress());
-        existingUser.setPassword(encryptedPassword);
 
-        return userRepository.save(existingUser);
+        if(existingUser.getEmail() != userDetails.getEmail()){
+            invalidateSession();
+        }
+
+        existingUser.setEmail(userDetails.getEmail());
+        User updatedUser = userRepository.save(existingUser);
+        
+        return updatedUser;
+    }
+
+    public String updateUserPassword(int userId, String oldPassword, String password) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        if(!passwordEncoder.matches(oldPassword, existingUser.getPassword())){
+            return "Not successful";
+        }
+        String encodedPassword = passwordEncoder.encode(password);
+        existingUser.setPassword(encodedPassword);
+        invalidateSession();
+        userRepository.save(existingUser);
+        return "Success";
+    }
+
+    private void invalidateSession() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            session.invalidate();
+        }
     }
 
     // Delete user

@@ -3,7 +3,9 @@ package com.example.wildcard.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +33,8 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/assets/**", "/product-images/**", "/js/**", "/WEB-INF/jsp/**").permitAll()
                 .requestMatchers("/signup", "/forgetpass", "/users", "/products").permitAll()
                 .requestMatchers("/login", "/products", "/home").permitAll()
+                .requestMatchers("/users/update").permitAll()
+                .requestMatchers("/users/changepass").permitAll()
                 .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/products/**").permitAll()
                 .anyRequest().authenticated()

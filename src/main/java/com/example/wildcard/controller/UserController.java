@@ -1,25 +1,29 @@
 package com.example.wildcard.controller;
 
+import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.example.wildcard.dto.ChangePasswordRequest;
+import com.example.wildcard.dto.UpdateUserRequest;
 import com.example.wildcard.model.User;
 import com.example.wildcard.service.UserService;
 
-@Controller
+import jakarta.servlet.http.HttpServletResponse;
+
+@RestController
 @RequestMapping("/users")
 public class UserController {
 
@@ -52,9 +56,16 @@ public class UserController {
     }
 
     // Update user
-    @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable int userId, @RequestBody User userDetails) {
-        User updatedUser = userService.updateUser(userId, userDetails);
+    @PutMapping("/update")
+    public ResponseEntity<User> updateUser(@ModelAttribute UpdateUserRequest updateUserRequest, HttpServletResponse response) throws IOException {
+        User userDetails = new User();
+        userDetails.setName(updateUserRequest.getName());
+        userDetails.setAddress(updateUserRequest.getAddress());
+        userDetails.setCourse(updateUserRequest.getCourse());
+        userDetails.setEmail(updateUserRequest.getEmail());
+        userDetails.setMobileNumber(updateUserRequest.getMobileNumber());
+        userDetails.setStudentId(updateUserRequest.getStudentId());
+        User updatedUser = userService.updateUser(Integer.parseInt(updateUserRequest.getUserId()),userDetails);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
@@ -73,6 +84,16 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PutMapping("/changepass")
+    public ResponseEntity<String> changePassword(@ModelAttribute ChangePasswordRequest changePasswordRequest){
+        int userId = Integer.parseInt(changePasswordRequest.getUserId());
+        String message = userService.updateUserPassword(userId, changePasswordRequest.getOldPassword(), changePasswordRequest.getPassword());
+        //if(!message.equals("Success")) {
+          //  return new ResponseEntity<>("Password incorrect", HttpStatus.NOT_ACCEPTABLE);
+        //}
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @PostMapping("/forgetpass")

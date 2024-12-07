@@ -111,7 +111,7 @@
         .product-grid {
             flex: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             padding-bottom: 20px;
             padding-left: 20px;
@@ -247,6 +247,7 @@
             <p>Course: ${user.course}</p>
             <p>Address: ${user.address}</p>
             <button onclick="openEditProfileModal()" class="btn text-[#F2E8C6] bg-[#AD4646] border-none hover:bg-opacity-40 hover:bg-[#AD4646] mt-4 w-full rounded-md">Edit Profile</button>
+            <button onclick="openChangePasswordModal()" class="btn text-[#F2E8C6] bg-[#AD4646] border-none hover:bg-opacity-40 hover:bg-[#AD4646] w-full rounded-md">Change password</button>
         </div>
 
         <div class="products">
@@ -284,8 +285,8 @@
                                     <div class="flex justify-between">
                                         <div class="flex flex-col">
                                             <h1 class="text-white font-bold">
-                ${product.productName.length() > 8 ? product.productName.substring(0, 8).concat('...') : product.productName}
-            </h1>
+                                                ${product.productName.length() > 8 ? product.productName.substring(0, 8).concat('...') : product.productName}
+                                            </h1>
                                             <p>$<fmt:formatNumber value="${product.price}" maxFractionDigits="0"/></p>
                                             <p>
                                                 <c:choose>
@@ -317,158 +318,256 @@
         <!-- Edit Profile Modal -->
         <div id="editProfile" class="hidden justify-center items-center fixed inset-0 w-full h-full bg-black bg-opacity-50 z-[9999]">
             <div class="bg-white flex rounded-lg w-[46%]">
-                <form class="w-full flex h-full justify-center">
+                <form id="editProfileForm" class="w-full flex h-full justify-center">
                     <div class="flex flex-col w-[90%] h-full py-5">
-                        <div class="flex">
+                        <div class="flex mb-3">
                                 <svg width="30" height="30" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
                                 </svg>
-                            <h1 class="font-bold text-xl pb-3 ml-2">Edit Profile</h1>
-                            <button class="modal-close" onclick="closeEditProfileModal()">&times;</button>
+                            <h1 class="font-bold text-xl pb-3 ml-2">Edit User Details</h1>
+                            <button type="button" class="ml-80 top-4 right-4 w-8 h-8 bg-[#AD4646] text-white border-none rounded-full flex items-center justify-center cursor-pointer text-xl hover:bg-[#963e3e]" onclick="closeEditProfileModal()">&times;</button>
                         </div>
                         <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
-                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${user.name}"/>
-                        </div>
-
-                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
-                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter old password"/>
-
-                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new password"/>
+                            <input type="text" name="name" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new name" value="${user.name}"/>
                         </div>
 
                         <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
-                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${user.studentId}"/>
-
-                            <input type="email" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${user.email}"/>
+                            <input type="text" name="studentId" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new student ID no." value="${user.studentId}"/>
+                            <input type="text" name="course" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new course" value="${user.course}"/>
                         </div>
 
                         <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
-                            <input type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${user.address}"/>
+                            <input type="text" name="email" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new email" value="${user.email}"/>
+                            <input type="text" name="mobileNumber" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-1 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new mobilr number" value="${user.mobileNumber}"/>
+                        </div>
+
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input type="text" name="address" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new address" value="${user.address}"/>
+                            <input type="number" name="userId" class="hidden" value="${user.userId}" />
                         </div>
 
                         <div class="flex w-full justify-end pt-3">
-                            <button onclick="updateProfile(${user.userId})" class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]">Update profile</button>
+                            <button type="submit" class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]">Update profile</button>
                         </div>
-                    
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div id="changePassword" class="hidden justify-center items-center fixed inset-0 w-full h-full bg-black bg-opacity-50 z-[9999]">
+            <div class="bg-white flex rounded-lg w-[46%]">
+                <form id="changePasswordForm" class="w-full flex h-full justify-center">
+                    <div class="flex flex-col w-[90%] h-full py-5">
+                        <div class="flex w-full mb-3">
+                                <svg width="30" height="30" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
+                                </svg>
+                            <h1 class="font-bold text-xl pb-3 ml-2">Change Password</h1>
+                            <button type="button" class="ml-80 top-4 right-4 w-8 h-8 bg-[#AD4646] text-white border-none rounded-full flex items-center justify-center cursor-pointer text-xl hover:bg-[#963e3e]" onclick="closeChangePasswordModal()">&times;</button>
+                        </div>
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input name="oldPassword" type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter old password"/>
+                        </div>
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input name="newPassword" type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new password"/>
+                        </div>
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input name="confirmNewPass" type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Confirm new password"/>
+                        </div>
+                        <input type="number" name="userId" class="hidden" value="${user.userId}" />
+                        <div class="flex w-full justify-end pt-3">
+                            <button type="submit" class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]">Change password</button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Product View Modal -->
-<div id="productModal" class="modal">
-    <div class="modal-content bg-[#E8E2D7] p-8 rounded-lg w-[800px] grid grid-cols-2 gap-8 relative">
-        <button class="modal-close absolute top-4 right-4 w-8 h-8 bg-[#AD4646] text-white border-none rounded-full flex items-center justify-center cursor-pointer text-xl hover:bg-[#963e3e]" onclick="closeProductModal()">&times;</button>
-        
-        <!-- Left side - Product Info -->
-        <div class="product-info">
-            <div class="product-header flex items-center mb-6">
-                <svg width="50" height="50" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
-                </svg>
-                <h3 class="text-xl font-bold ml-2 text-black">Product Overview</h3>
+        <div id="productModal" class="modal">
+            <div class="modal-content bg-[#E8E2D7] p-8 rounded-lg w-[800px] grid grid-cols-2 gap-8 relative">
+                <button type="button" class="modal-close absolute top-4 right-4 w-8 h-8 bg-[#AD4646] text-white border-none rounded-full flex items-center justify-center cursor-pointer text-xl hover:bg-[#963e3e]" onclick="closeProductModal()">&times;</button>
+                
+                <!-- Left side - Product Info -->
+                <div class="product-info">
+                    <div class="product-header flex items-center mb-6">
+                        <svg width="50" height="50" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
+                        </svg>
+                        <h3 class="text-xl font-bold ml-2 text-black">Product Overview</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-gray-600 font-medium mb-1">Product Name:</div>
+                            <input id="modalProductName" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${product.productName}"/>
+                        </div>
+                        
+                        <div>
+                            <div class="text-gray-600 font-medium mb-1">Product Details:</div>
+                            <input id="modalProductDetails" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${product.details}"/>
+                        </div>
+                        
+                        <div>
+                            <div class="text-gray-600 font-medium mb-1">Product Price:</div>
+                            <input id="modalProductPrice" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter New Price"/>
+                        </div>
+                        
+                        <div>
+                            <div class="text-gray-600 font-medium mb-1">Created By:</div>
+                            <div id="modalCreatedBy" class="text-black text-lg "></div>
+                        </div>
+
+                        <div class="flex items-center space-x-4 mt-6">
+                            <button onclick="decrementQuantity()" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">-</button>
+                            <input type="number" id="modalQuantity" value="1" min="1" readonly class="w-16 h-8 text-center border rounded-md">
+                            <button onclick="incrementQuantity()" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right side - Product Image -->
+                <div class="product-image-section flex flex-col">
+                    <div class="bg-gray-100 rounded-lg overflow-hidden mb-4 h-[300px]">
+                        <img id="modalProductImage" alt="Product Image" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex justify-end gap-4 mt-20">
+                        <button class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="addToCart()">Edit Pic</button>
+                        <button class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="buyNow()">Update</button>
+                        <button class="btn bg-[#AD4646] text-red-600 bg-opacity-50 border-red-600 hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="buyNow()">Delete</button>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <script>
+            document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const form = e.target;
+                try{
+                    const formData = new FormData();
+                    formData.append('userId', form.userId.value);
+                    formData.append('name', form.name.value);
+                    formData.append('course', form.course.value);
+                    formData.append('studentId', form.studentId.value);
+                    formData.append('email', form.email.value);
+                    formData.append('mobileNumber', form.mobileNumber.value);
+                    formData.append('address', form.address.value);
+                        
+                    const response = await fetch('/users/update', {
+                        method: 'PUT',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create product. Please try again.');
+                    }
+                    alert("User details updated successfully!");
+                    window.location.href = '/main';
+                }catch (error) {
+                    console.error(error);
+                    alert(error.message);
+                }
+            })
+
+            document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const form = e.target;
+                try{
+
+                    if(form.newPassword.value != form.confirmNewPass.value){
+                        throw new Error('Confirm password doesn&apos;t match.')
+                    }
+
+                    const formData = new FormData();
+                    formData.append('userId', form.userId.value);
+                    formData.append('oldPassword', form.oldPassword.value);
+                    formData.append('password', form.newPassword.value);
+                        
+                    const response = await fetch('/users/changepass', {
+                        method: 'PUT',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update password. Wrong password.');
+                    }
+                    alert("Password updated successfully! You will be logged out of session.");
+                    window.location.href = '/login';
+                }catch (error) {
+                    console.error(error);
+                    alert(error.message);
+                }
+            })
+
+            function openProductModal(productId) {
+                // Fetch product details using AJAX
+                console.log(productId)
+                fetch("/products/" + productId)
+                    .then(response => response.json())
+                    .then(product => {
+                        document.getElementById('modalProductName').textContent = product.productName;
+                        document.getElementById('modalProductDetails').textContent = product.details;
+                        document.getElementById('modalProductPrice').textContent = `₱${product.price.toLocaleString()}`;
+                        document.getElementById('modalCreatedBy').textContent = product.createdBy;
+                        document.getElementById('modalProductImage').src = product.imageUrl;
+                        document.getElementById('modalQuantity').value = 1;
+                        document.getElementById('productModal').classList.add('active');
+                    });
+            }
+
+            function updateProfile(profileId) {
+                
+            }
+
+            function closeProductModal() {
+                document.getElementById('productModal').classList.remove('active');
+            }
+
+            function openEditProfileModal(){
+                document.getElementById('editProfile').classList.remove('hidden');
+                document.getElementById('editProfile').classList.add('flex');
+            }
+
+            function closeEditProfileModal(){
+                document.getElementById('editProfile').classList.add('hidden');
+            }
+
+            function openChangePasswordModal(){
+                document.getElementById('changePassword').classList.remove('hidden');
+                document.getElementById('changePassword').classList.add('flex');
+            }
+
+            function closeChangePasswordModal(){
+                document.getElementById('changePassword').classList.add('hidden');
+            }
+
             
-            <div class="space-y-4">
-                <div>
-                    <div class="text-gray-600 font-medium mb-1">Product Name:</div>
-                    <input id="modalProductName" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${product.productName}"/>
-                </div>
-                
-                <div>
-                    <div class="text-gray-600 font-medium mb-1">Product Details:</div>
-                    <input id="modalProductDetails" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="${product.details}"/>
-                </div>
-                
-                <div>
-                    <div class="text-gray-600 font-medium mb-1">Product Price:</div>
-                    <input id="modalProductPrice" class="text-black text-lg bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter New Price"/>
-                </div>
-                
-                <div>
-                    <div class="text-gray-600 font-medium mb-1">Created By:</div>
-                    <div id="modalCreatedBy" class="text-black text-lg "></div>
-                </div>
-
-                <div class="flex items-center space-x-4 mt-6">
-                    <button onclick="decrementQuantity()" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">-</button>
-                    <input type="number" id="modalQuantity" value="1" min="1" readonly class="w-16 h-8 text-center border rounded-md">
-                    <button onclick="incrementQuantity()" class="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center text-lg font-medium">+</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right side - Product Image -->
-        <div class="product-image-section flex flex-col">
-            <div class="bg-gray-100 rounded-lg overflow-hidden mb-4 h-[300px]">
-                <img id="modalProductImage" alt="Product Image" class="w-full h-full object-cover">
-            </div>
-            <div class="flex justify-end gap-4 mt-20">
-                <button class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="addToCart()">Edit Pic</button>
-                <button class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]" onclick="buyNow()">Update</button>
-            </div>
-        </div>
-    </div>
-</div>
-    </div>
-</sec:authorize>
-<script>
-        function openProductModal(productId) {
-            // Fetch product details using AJAX
-            console.log(productId)
-            fetch("/products/" + productId)
-                .then(response => response.json())
-                .then(product => {
-                    document.getElementById('modalProductName').textContent = product.productName;
-                    document.getElementById('modalProductDetails').textContent = product.details;
-                    document.getElementById('modalProductPrice').textContent = `₱${product.price.toLocaleString()}`;
-                    document.getElementById('modalCreatedBy').textContent = product.createdBy;
-                    document.getElementById('modalProductImage').src = product.imageUrl;
-                    document.getElementById('modalQuantity').value = 1;
-                    document.getElementById('productModal').classList.add('active');
-                });
-        }
-
-        function updateProfile(profileId) {
-
-        }
-
-        function closeProductModal() {
-            document.getElementById('productModal').classList.remove('active');
-        }
-
-        function openEditProfileModal(){
-            document.getElementById('editProfile').classList.remove('hidden');
-            document.getElementById('editProfile').classList.add('flex');
-        }
-
-        function closeEditProfileModal(){
-            document.getElementById('editProfile').classList.add('hidden');
-        }
-
-        
-        (function() {
-            window.history.pushState(null, document.title, location.href);
-            window.addEventListener('popstate', function(event) {
+            (function() {
                 window.history.pushState(null, document.title, location.href);
-            });
-        })();
+                window.addEventListener('popstate', function(event) {
+                    window.history.pushState(null, document.title, location.href);
+                });
+            })();
 
-        document.getElementById('logout-link').addEventListener('click', function(e) {
-        e.preventDefault();
-        var form = document.createElement('form');
-        form.method = 'post';
-        form.action = '${pageContext.request.contextPath}/logout';
-        
-        var csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '${_csrf.parameterName}';
-        csrfInput.value = '${_csrf.token}';
-        
-        form.appendChild(csrfInput);
-        document.body.appendChild(form);
-        form.submit();
-    });
-</script>
+            document.getElementById('logout-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '${pageContext.request.contextPath}/logout';
+                
+                var csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '${_csrf.parameterName}';
+                csrfInput.value = '${_csrf.token}';
+                
+                form.appendChild(csrfInput);
+                document.body.appendChild(form);
+                form.submit();
+            });
+    </script>
+</sec:authorize>
 </body>
 </html>
