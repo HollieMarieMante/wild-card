@@ -560,7 +560,7 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error('Failed to create product. Please try again.');
+                        throw new Error('Failed to update user details. Please try again.');
                     }
                     alert("User details updated successfully!");
                     window.location.href = '/main';
