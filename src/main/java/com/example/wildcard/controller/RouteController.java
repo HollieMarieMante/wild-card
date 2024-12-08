@@ -52,6 +52,7 @@ public class RouteController {
     }
 
 
+
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -241,4 +242,5 @@ public class RouteController {
         }
         return "redirect:usermng";
     }  
+    
 }

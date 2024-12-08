@@ -3,9 +3,7 @@ package com.example.wildcard.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,15 +39,23 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/main", true)
-                .failureUrl("/error")
-                .successHandler(authenticationSuccessHandler())
-                .permitAll()
+            .loginPage("/login")
+            .loginProcessingUrl("/login")
+            .usernameParameter("username")
+            .passwordParameter("password")
+            .defaultSuccessUrl("/main", true)
+            .failureHandler((request, response, exception) -> {
+                // Redirect with error parameter
+                if (exception.getMessage().contains("Bad credentials")) {
+                    response.sendRedirect("/login?error=invalid");
+                } else {
+                    response.sendRedirect("/login?error=true");
+                }
+            })
+            .successHandler(authenticationSuccessHandler())
+            .permitAll()
             )
+
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
@@ -89,7 +95,8 @@ public class SecurityConfig {
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_BLOCK"))) {
                 // Invalidate session and redirect to login with an error message
                 request.getSession().invalidate();
-                response.sendRedirect("/access-denied");
+               // response.sendRedirect("/access-denied");
+                response.sendRedirect("/login?error=blocked");
             } else if (authentication.getAuthorities().stream()
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_SUPER_ADMIN"))) {
                 response.sendRedirect("/admin");

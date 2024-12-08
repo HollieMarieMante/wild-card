@@ -144,10 +144,13 @@
                                class="form-input">
                                <div class="error-message">
                                 <c:if test="${param.error == 'blocked'}">
-                                    <p>Your account is currently blocked.Please contact support</p>
+                                    <p>Your account is currently blocked. Please contact support.</p>
+                                </c:if>
+                                <c:if test="${param.error == 'invalid'}">
+                                    <p>Invalid username or password. Please try again.</p>
                                 </c:if>
                                 <c:if test="${param.error == 'true'}">
-                                    <p>Invalid username or password. Please try again.</p>
+                                    <p>An error occurred. Please try again.</p>
                                 </c:if>
                             </div>
                     </div>

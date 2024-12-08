@@ -120,7 +120,7 @@
                     <input name="category" class="input mb-2 w-full flex" placeholder="Category"/>
                     <input name="price" class="input mb-2 w-full flex" placeholder="Price"/>
                     <input name="quantity" class="input mb-2 w-full flex" placeholder="Quantity"/>
-                    <textarea name="details" class="textarea p-4 rounded-lg bg-gray-800 w-full flex mb-2 h-24 resize-none" placeholder="Details"></textarea>
+                    <textarea name="details" class="textarea p-4 rounded-lg bg-white-800 w-full flex mb-2 h-24 resize-none" placeholder="Details"></textarea>
                     <div class="w-full flex justify-end">
                         <button type="submit" class="btn">Add product</button>
                     </div>

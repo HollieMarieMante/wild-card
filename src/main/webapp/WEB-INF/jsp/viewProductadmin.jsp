@@ -8,7 +8,7 @@
     <link href="/css/styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Profile</title>
+    <title>Review</title>
     <style>
         * {
             margin: 0;
@@ -269,9 +269,6 @@
                     <p class="text-[#F2E8C6] text-base ml-2">${user.name}</p>
                 </summary>
                 <ul class="menu dropdown-content bg-white rounded-md w-52 shadow-lg cursor-pointer">
-                    <li class="hover:bg-slate-200 first:rounded-t-md">
-                        <a href="/profile" class="block px-5 py-3 text-black text-sm">Profile</a>
-                    </li>
                     <hr class="border-gray-200"/>
                     <li class="hover:bg-slate-200 last:rounded-b-md">
                         <a id="logout-link" class="block px-5 py-3 text-red-600 text-sm font-bold">Logout</a>
@@ -282,9 +279,16 @@
                 
               </div>
               <div>
-                <a href="/main"><button class="btn bg-transparent border-none text-[#F2E8C6] hover:text-white shadow-none hover:bg-opacity-10 rounded-3xl px-5">Product Listing</button></a>
-                <a href="/cart"><button class="btn bg-transparent border-[#F2E8C6] text-[#F2E8C6] hover:text-black hover:bg-opacity-10 hover:border-[#F2E8C6] rounded-3xl px-5">My Cart</button></a>
-              </div>
+                <div>
+                    <a href="/usermng"
+                      ><button
+                        class="btn bg-transparent border-[#F2E8C6] text-[#F2E8C6] hover:text-black hover:bg-opacity-10 hover:border-[#F2E8C6] rounded-3xl px-5"
+                      >
+                        User
+                      </button></a
+                    >
+                  </div>
+                </div>
         </div>
     </div>
 
