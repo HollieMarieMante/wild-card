@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/carts")
+@RequestMapping("/carts")
 public class CartController {
 
     private final CartService cartService;
@@ -21,11 +21,6 @@ public class CartController {
     }
 
     // Create a new cart
-    @PostMapping
-    public ResponseEntity<Cart> createCart(@RequestBody Cart cart) {
-        Cart createdCart = cartService.createCart(cart);
-        return new ResponseEntity<>(createdCart, HttpStatus.CREATED);
-    }
 
     // Get cart by ID
     @GetMapping("/{cartId}")

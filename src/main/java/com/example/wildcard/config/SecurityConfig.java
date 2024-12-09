@@ -45,7 +45,6 @@ public class SecurityConfig {
             .passwordParameter("password")
             .defaultSuccessUrl("/main", true)
             .failureHandler((request, response, exception) -> {
-                // Redirect with error parameter
                 if (exception.getMessage().contains("Bad credentials")) {
                     response.sendRedirect("/login?error=invalid");
                 } else {

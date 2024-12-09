@@ -430,8 +430,7 @@
             document.body.appendChild(form);
             form.submit();
         });
-
-        // Modal functions
+        
         function openProductModal(productId) {
             // Fetch product details using AJAX
             fetch("/products/" + productId)
