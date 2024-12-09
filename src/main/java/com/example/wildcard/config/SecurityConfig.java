@@ -34,6 +34,8 @@ public class SecurityConfig {
                 .requestMatchers("/users/update").permitAll()
                 .requestMatchers("/users/changepass").permitAll()
                 .requestMatchers("/products/updateproduct").permitAll()
+                .requestMatchers("/cart/get-cart").permitAll()
+                .requestMatchers("/cart/{userId}/add").permitAll()
                 .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/products/**").permitAll()
                 .anyRequest().authenticated()

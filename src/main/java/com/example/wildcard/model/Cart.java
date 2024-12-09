@@ -15,26 +15,25 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Cart {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cartId;
 
-    @Column(nullable = false)
-    private String productName;
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = false, unique = true)
+    private User user;
 
-    @Column(nullable = false)
-    private String quantity;
-
-    @Column(nullable = false)
-    private float subTotal;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> items;
 
     @Column(nullable = false)
     private float totalPrice;
 
-    @OneToOne
-    @JoinColumn(name = "userId", nullable = false)
-    User user;
-
-    @ManyToMany(mappedBy = "carts")
-    private List<Product> products;
+    // Calculate total price dynamically based on items in the cart
+    public void calculateTotalPrice() {
+        this.totalPrice = items.stream()
+                .map(item -> item.getProduct().getPrice() * item.getQuantity())
+                .reduce(0.0f, Float::sum);
+    }
 }

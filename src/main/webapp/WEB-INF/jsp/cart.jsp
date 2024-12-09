@@ -435,6 +435,27 @@
     </div>
 </sec:authorize>
 <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+        const apiUrl = "/cart/get-cart";
+
+        fetch(apiUrl, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse JSON response
+        })
+        .then(data => {
+            console.log("Cart Data:", data);
+        })
+        
+        })
 
         function openProductModal() {
             document.getElementById('productModal').classList.add('active');

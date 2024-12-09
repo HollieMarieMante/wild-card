@@ -169,6 +169,18 @@
                     <p class="text-[#F2E8C6] text-base ml-2">${user.name}</p>
                 </summary>
                 <ul class="menu dropdown-content bg-white rounded-md w-52 shadow-lg cursor-pointer">
+                    <li class="hover:bg-slate-200 first:rounded-t-md">
+                        <a href="/admin" class="block px-5 py-3 text-black text-sm"
+                          >Product Approval</a
+                        >
+                      </li>
+                      <hr class="border-gray-200" />
+                      <li class="hover:bg-slate-200 first:rounded-t-md">
+                        <a href="/usermng" class="block px-5 py-3 text-black text-sm"
+                          >Manage Users</a
+                        >
+                      </li>
+                      <hr class="border-gray-200" />
                     <li class="hover:bg-slate-200 last:rounded-b-md">
                         <a id="logout-link" class="block px-5 py-3 text-red-600 text-sm font-bold">Logout</a>
                     </li>

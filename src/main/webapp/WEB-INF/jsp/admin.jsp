@@ -91,6 +91,17 @@ prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
               <ul
                 class="menu dropdown-content bg-white rounded-md w-52 shadow-lg cursor-pointer"
               >
+              <li class="hover:bg-slate-200 first:rounded-t-md">
+                <a href="/admin" class="block px-5 py-3 text-black text-sm"
+                  >Product Approval</a
+                >
+              </li>
+              <hr class="border-gray-200" />
+              <li class="hover:bg-slate-200 first:rounded-t-md">
+                <a href="/usermng" class="block px-5 py-3 text-black text-sm"
+                  >Manage Users</a
+                >
+              </li>
                 <hr class="border-gray-200" />
                 <li class="hover:bg-slate-200 last:rounded-b-md">
                   <a

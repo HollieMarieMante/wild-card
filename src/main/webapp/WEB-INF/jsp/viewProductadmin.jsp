@@ -269,6 +269,17 @@
                     <p class="text-[#F2E8C6] text-base ml-2">${user.name}</p>
                 </summary>
                 <ul class="menu dropdown-content bg-white rounded-md w-52 shadow-lg cursor-pointer">
+                    <li class="hover:bg-slate-200 first:rounded-t-md">
+                        <a href="/admin" class="block px-5 py-3 text-black text-sm"
+                          >Product Approval</a
+                        >
+                      </li>
+                      <hr class="border-gray-200" />
+                      <li class="hover:bg-slate-200 first:rounded-t-md">
+                        <a href="/usermng" class="block px-5 py-3 text-black text-sm"
+                          >Manage Users</a
+                        >
+                      </li>
                     <hr class="border-gray-200"/>
                     <li class="hover:bg-slate-200 last:rounded-b-md">
                         <a id="logout-link" class="block px-5 py-3 text-red-600 text-sm font-bold">Logout</a>
@@ -318,11 +329,10 @@
                     <div class="value">${product.createdBy}</div>
                 </div>
 
-                <div class="flex items-center">
-                    <button class="btn btn-square btn-sm" onclick="decrementQuantity(this)">-</button>
-                    <input type="number" id="quantity" name="quantity" class="input input-bordered w-16 mx-2 text-center" value="1" min="1" readonly>
-                    <button class="btn btn-square btn-sm" onclick="incrementQuantity(this)">+</button>
-                </div>                  
+                <div>
+                    <label class="text-[0.95rem] text-[#666] font-[500]">Quantity:</label>
+                    <div class="text-[1.1em] text-[#333] font-[400]">${product.quantity}</div>
+                </div>               
             </div>
             
             <div class="divider"></div>

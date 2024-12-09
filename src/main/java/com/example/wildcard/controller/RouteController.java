@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.wildcard.model.CartItem;
 import com.example.wildcard.model.Product;
 import com.example.wildcard.model.User;
+import com.example.wildcard.service.CartItemService;
 import com.example.wildcard.service.ProductService;
 import com.example.wildcard.service.UserService;
 
@@ -31,6 +33,9 @@ public class RouteController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CartItemService cartItemService;
 
     @GetMapping("/")
     public String landingPage() {
@@ -112,8 +117,6 @@ public class RouteController {
     public String errorPage() {   
         return "error";
     }
-
-
 
     @GetMapping("/add-product")
     public String addProductPage(Model model){
@@ -207,9 +210,12 @@ public class RouteController {
             
             User currentUser = userService.findByEmail(username);
             model.addAttribute("user", currentUser);
+            List<CartItem> cartItems = cartItemService.getItemsByCartId(currentUser.getUserId());
+            model.addAttribute("products", cartItems);
         }
         return "cart";
     }
+    
     @GetMapping("/usermng")
     public String getUserList(Model model) {
         model.addAttribute("users", userService.findAllUsers());

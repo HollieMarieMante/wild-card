@@ -328,6 +328,7 @@
                             <c:otherwise>
                                 <c:forEach var="product" items="${products}">
                                     <c:if test="${product.status == 1}">
+                                      <c:if test="${product.user.email != user.email}">
                                         <div class="transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl overflow-hidden card col-span-1 h-[17rem] mt-5 shadow-xl rounded-xl bg-[#4D4848] inline-block">
                                             <figure class="h-[60%] w-full items-center justify-center bg-black overflow-hidden">
                                                 <img src="${product.imageUrl}" alt="photo unavailable" class="cover" />
@@ -347,6 +348,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                      </c:if>
                                     </c:if>
                                 </c:forEach>
                             </c:otherwise>
@@ -385,7 +387,7 @@
                       </div>
                       <div class="quantity-control">
                           <button onclick="decrementQuantity()">-</button>
-                          <input type="number" id="modalQuantity" value="1" min="1" readonly>
+                          <input type="number" id="modalQuantity" value="1" min="1" max="20">
                           <button onclick="incrementQuantity()">+</button>
                       </div>
                   </div>
@@ -397,7 +399,7 @@
                           <img id="modalProductImage" src="" alt="Product Image">
                       </div>
                       <div class="action-buttons">
-                          <button class="btn-add-cart" onclick="addToCart()">Add to Cart</button>
+                          <button class="btn-add-cart" onclick="addProductToCart(${user.userId})">Add to Cart</button>
                           <button class="btn-buy-now" onclick="buyNow()">Buy Now</button>
                       </div>
                   </div>
@@ -408,6 +410,8 @@
 
     <script>
         // Existing scripts
+        let productObject;
+
         (function() {
             window.history.pushState(null, document.title, location.href);
             window.addEventListener('popstate', function(event) {
@@ -430,18 +434,49 @@
             document.body.appendChild(form);
             form.submit();
         });
+
+        function addProductToCart(userId) {
+            const apiUrl = "/cart/" + userId + "/add";
+            const quantity = document.getElementById('modalQuantity').value;
+            fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    productId: productObject.productId,
+                    quantity: quantity
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Cart updated:", data);
+                alert("Product added to cart successfully!");
+            })
+            .catch(error => {
+                console.error("Error adding product to cart:", error);
+                alert("Failed to add product to cart. Please try again.");
+            });
+        }
         
         function openProductModal(productId) {
             // Fetch product details using AJAX
             fetch("/products/" + productId)
                 .then(response => response.json())
                 .then(product => {
+                    productObject = product
                     document.getElementById('modalProductName').textContent = product.productName;
                     document.getElementById('modalProductDetails').textContent = product.details;
-                    document.getElementById('modalProductPrice').textContent = `₱${product.price.toLocaleString()}`;
+                    document.getElementById('modalProductPrice').textContent = product.price.toString();
                     document.getElementById('modalCreatedBy').textContent = product.createdBy;
                     document.getElementById('modalProductImage').src = product.imageUrl;
                     document.getElementById('modalQuantity').value = 1;
+                    document.getElementById('modalQuantity').setAttribute('max', product.quantity);
                     document.getElementById('productModal').classList.add('active');
                 });
         }
@@ -453,7 +488,9 @@
         function incrementQuantity() {
             const input = document.getElementById('modalQuantity');
             const currentValue = parseInt(input.value) || 0;
-            input.value = currentValue + 1;
+            if(currentValue < productObject.quantity){
+              input.value = currentValue + 1;
+            }
         }
 
         function decrementQuantity() {

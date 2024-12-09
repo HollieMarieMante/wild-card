@@ -1,89 +1,107 @@
 package com.example.wildcard.controller;
 
 import com.example.wildcard.model.Cart;
+import com.example.wildcard.model.Product;
+import com.example.wildcard.model.User;
 import com.example.wildcard.service.CartService;
+import com.example.wildcard.service.ProductService;
+import com.example.wildcard.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/carts")
+@RequestMapping("/cart")
 public class CartController {
 
-    private final CartService cartService;
+    @Autowired
+    private CartService cartService;
 
     @Autowired
-    public CartController(CartService cartService) {
-        this.cartService = cartService;
+    private ProductService productService;
+
+    @Autowired
+    private UserService userService;
+
+    // Get cart for a user
+    @GetMapping("/get-cart")
+    public ResponseEntity<Cart> getCart() {
+        Cart cart;
+        User user;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            String username = userDetails.getUsername();
+            
+            user = userService.findByEmail(username);
+        
+            if (user == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            cart = cartService.getOrCreateCart(user);
+            return ResponseEntity.ok(cart);
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    // Create a new cart
-
-    // Get cart by ID
-    @GetMapping("/{cartId}")
-    public ResponseEntity<Cart> getCartById(@PathVariable int cartId) {
-        return cartService.getCartById(cartId)
-                .map(cart -> new ResponseEntity<>(cart, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    // Get cart by user ID
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable int userId) {
-        return cartService.getCartByUserId(userId)
-                .map(cart -> new ResponseEntity<>(cart, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    // Get all carts for a user (if multiple carts are allowed)
-    @GetMapping("/user/{userId}/all")
-    public ResponseEntity<List<Cart>> getAllCartsByUserId(@PathVariable int userId) {
-        List<Cart> carts = cartService.getAllCartsByUserId(userId);
-        return new ResponseEntity<>(carts, HttpStatus.OK);
-    }
-
-    // Update cart
-    @PutMapping("/{cartId}")
-    public ResponseEntity<Cart> updateCart(@PathVariable int cartId, @RequestBody Cart cartDetails) {
-        Cart updatedCart = cartService.updateCart(cartId, cartDetails);
-        return new ResponseEntity<>(updatedCart, HttpStatus.OK);
-    }
-
-    // Delete cart
-    @DeleteMapping("/{cartId}")
-    public ResponseEntity<Void> deleteCart(@PathVariable int cartId) {
-        cartService.deleteCart(cartId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    // Add product to cart
-    @PostMapping("/user/{userId}/product/{productId}")
+    // Add a product to the cart
+    @PostMapping("/{userId}/add")
     public ResponseEntity<Cart> addProductToCart(
             @PathVariable int userId,
-            @PathVariable int productId,
-            @RequestParam(defaultValue = "1") int quantity
-    ) {
-        Cart updatedCart = cartService.addProductToCart(userId, productId, quantity);
-        return new ResponseEntity<>(updatedCart, HttpStatus.OK);
+            @RequestParam int productId,
+            @RequestParam int quantity) {
+
+        User user = userService.getUserById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));;
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Product product = productService.getProductById(productId);
+        if (product == null || product.getQuantity() < quantity) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Cart updatedCart = cartService.addProductToCart(user, product, quantity);
+        return ResponseEntity.ok(updatedCart);
     }
 
-    // Remove product from cart
-    @DeleteMapping("/user/{userId}/product/{productId}")
+    // Remove a product from the cart
+    @DeleteMapping("/{userId}/remove")
     public ResponseEntity<Cart> removeProductFromCart(
             @PathVariable int userId,
-            @PathVariable int productId
-    ) {
-        Cart updatedCart = cartService.removeProductFromCart(userId, productId);
-        return new ResponseEntity<>(updatedCart, HttpStatus.OK);
+            @RequestParam int productId) {
+
+        User user = userService.getUserById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));;
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Product product = productService.getProductById(productId);
+        if (product == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Cart updatedCart = cartService.removeProductFromCart(user, product);
+        return ResponseEntity.ok(updatedCart);
     }
 
-    // Clear entire cart
-    @DeleteMapping("/user/{userId}/clear")
-    public ResponseEntity<Void> clearCart(@PathVariable int userId) {
-        cartService.clearCart(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    // Clear all items in the cart
+    @DeleteMapping("/{userId}/clear")
+    public ResponseEntity<String> clearCart(@PathVariable int userId) {
+        User user = userService.getUserById(userId)
+                        .orElseThrow(() -> new RuntimeException("User not found"));;
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        cartService.clearCart(user);
+        return ResponseEntity.ok("Cart cleared successfully.");
     }
 }
