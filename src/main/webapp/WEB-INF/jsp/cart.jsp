@@ -358,33 +358,56 @@
             </div>
             <p class="text-lg">Name of Buyer: <c:out value="${user.name}" /></p>
             <p class="text-lg">Mobile No.: <c:out value="${user.mobileNumber}" /></p>
-            <p class="text-lg">Subtotal: <c:out value="${product.total}" /></p>
+            <p class="text-lg">Total: <c:out value="${cart.totalPrice}" /></p>
+
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" id="selectAll" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                <span>Select All Items</span>
+            </label>
+
             <div class="flex justify-center mt-auto">
-                <button class="bg-[#AD4646] text-white px-4 py-2 rounded-lg btn hover:bg-red-700">Buy Now</button>
+                <button onclick="openCheckoutModal()" class="bg-[#AD4646] text-white px-4 py-2 rounded-lg btn hover:bg-red-700">Checkout Now</button>
             </div>
         </div>
 
-        <div class="flex flex-grow-1 flex-col w-full">
-            <div class="rounded-lg hover:rounded-lg flex overflow-hidden w-full h-40 bg-[#f7e6e6] hover:scale-[1.02] transform transition-transform duration-300">
-                <div class="w-60 h-full">
-                    <img class="h-40" src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="Product">
-                </div>
-                <div class="bg-[#4a4a4a] flex w-full p-3 h-full rounded-r-lg hover:rounded-r-lg justify-between flex-col">
-                    <div>
-                        <h3 class="text-white font-bold mb-2">Product Title</h3>
-                        <p class="text-sm">Product description or additional details can go here</p>
+        <c:choose>
+                <c:when test="${empty cartItems}">
+                  <div class="col-span-full text-center py-10">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                      No products found.
+                    </h2>
+                  </div>
+                </c:when>
+                
+                <c:otherwise>
+                    <c:forEach var="item" items="${cartItems}"><div class="flex flex-grow-1 flex-col w-full">
+                        <div class="cart-item rounded-lg hover:rounded-lg flex overflow-hidden w-full h-40 bg-[#f7e6e6] hover:scale-[1.02] transform transition-transform duration-300 relative">
+                            
+                            <div class="absolute top-2 right-2 z-10">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-cart-item-id="${item.cartItemId}"/>
+                            </div>
+                            
+                            <div class="w-60 h-full">
+                                <img class="w-60" src="${item.product.imageUrl}" alt="Product">
+                            </div>
+                            <div class="bg-[#4a4a4a] flex w-full p-3 h-full rounded-r-lg hover:rounded-r-lg justify-between flex-col">
+                                <div>
+                                    <h3 class="text-white font-bold mb-2">${item.product.productName}</h3>
+                                    <p class="text-sm">${item.product.details}</p>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <p class="text-lg font-bold">Order quantity: ${item.quantity}</p>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <p class="text-lg font-bold">&#8369;${item.product.price}</p>
+                                    <button onclick="openProductModal(${item.product.productId}, ${item.quantity}, ${item.cartItemId})" class="btn btn-primary bg-opacity-45">Learn now!</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <p class="text-lg font-bold">quantity</p>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <p class="text-lg font-bold">&#8369;300</p>
-                        <button onclick="openProductModal()" class="btn btn-primary bg-opacity-45">Learn now!</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                    </c:forEach>
+                </c:otherwise>
+        </c:choose>
 
     <div id="productModal" class="modal">
         <div class="modal-content">
@@ -415,10 +438,12 @@
                 </div>
                 <div class="quantity-control">
                     <button onclick="decrementQuantity()">-</button>
-                    <input type="number" id="modalQuantity" value="1" min="1" readonly>
+                    <input type="number" id="modalQuantity" value="1" min="1">
                     <button onclick="incrementQuantity()">+</button>
                 </div>
             </div>
+
+            <input class="hidden" type="number" id="cartItemId">
             
             <div class="divider"></div>
             
@@ -427,14 +452,76 @@
                     <img id="modalProductImage" src="" alt="Product Image">
                 </div>
                 <div class="action-buttons">
-                    <button class="btn-add-cart" onclick="addToCart()">Add to Cart</button>
+                    <button class="btn-add-cart" onclick="addToCart()">Remove from Cart</button>
                     <button class="btn-buy-now" onclick="buyNow()">Buy Now</button>
                 </div>
             </div>
         </div>
+
+        
+        <!-- Change Password Modal -->
+        <div id="checkoutModal" class="hidden justify-center items-center fixed inset-0 w-full h-full bg-black bg-opacity-50 z-[9999]">
+            <div class="bg-white flex rounded-lg w-[46%]">
+                <form id="changePasswordForm" class="w-full flex h-full justify-center">
+                    <div class="flex flex-col w-[90%] h-full py-5">
+                        <div class="flex w-full mb-3">
+                                <svg width="30" height="30" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M22.5 7.5C14.2157 7.5 7.5 14.2157 7.5 22.5C7.5 26.4358 9.01511 30.0185 11.4975 32.6958C11.5912 32.3857 11.7159 32.0811 11.8785 31.7904C12.4297 30.8048 13.1251 29.8934 13.9502 29.0876C14.7782 28.2788 15.7124 27.6001 16.72 27.0639C15.1854 25.5949 14.2259 23.5418 14.2259 21.25C14.2259 16.7213 17.9723 13.125 22.5 13.125C27.0277 13.125 30.7741 16.7213 30.7741 21.25C30.7741 23.5418 29.8146 25.5949 28.28 27.0639C29.2876 27.6001 30.2218 28.2788 31.0498 29.0876C31.8749 29.8934 32.5703 30.8048 33.1215 31.7904C33.2841 32.0811 33.4088 32.3857 33.5025 32.6958C35.9849 30.0185 37.5 26.4358 37.5 22.5C37.5 14.2157 30.7843 7.5 22.5 7.5Z" fill="#AD4646"/>
+                                </svg>
+                            <h1 class="font-bold text-xl pb-3 ml-2">Change Password</h1>
+                            <button type="button" class="ml-80 top-4 right-4 w-8 h-8 bg-[#AD4646] text-white border-none rounded-full flex items-center justify-center cursor-pointer text-xl hover:bg-[#963e3e]" onclick="closeChangePasswordModal()">&times;</button>
+                        </div>
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input name="oldPassword" type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter old password"/>
+                        </div>
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input name="newPassword" type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Enter new password"/>
+                        </div>
+                        <div class="w-full h-12 grid grid-cols-2 justify-center items-center mb-2 gap-2">
+                            <input name="confirmNewPass" type="text" class="bg-slate-200 border-spacing-1 border-2 border-[#AD4646] text-black h-12 flex col-span-2 rounded-lg p-5 focus:bg-opacity-20 cursor-text" placeholder="Confirm new password"/>
+                        </div>
+                        <input type="number" name="userId" class="hidden" value="${user.userId}" />
+                        <div class="flex w-full justify-end pt-3">
+                            <button type="submit" class="btn bg-[#AD4646] bg-opacity-50 text-black hover:bg-opacity-100 hover:bg-[#AD4646]">Change password</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
 </sec:authorize>
 <script>
+        function openCheckoutModal(){
+            document.getElementById('checkoutModal').classList.remove('hidden');
+            document.getElementById('checkoutModal').classList.add('flex');
+        }
+
+        function closeCheckoutModal(){
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        document.querySelectorAll('.cart-item').forEach(card => {
+            const checkbox = card.querySelector('input[type="checkbox"]');
+        });
+
+        // Function to get all selected cart items
+        function getSelectedCartItems() {
+            const selectedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(selectedCheckboxes).map(checkbox => {
+                return checkbox.getAttribute('data-cart-item-id');
+            });
+        }
+
+        document.getElementById('selectAll').addEventListener('change', function(e) {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                if (checkbox !== e.target) {
+                    checkbox.checked = e.target.checked;
+                }
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
 
         const apiUrl = "/cart/get-cart";
@@ -457,11 +544,64 @@
         
         })
 
-        function openProductModal() {
-            document.getElementById('productModal').classList.add('active');
+        function openProductModal(productId, quantity, cartItemId) {
+            fetch("/products/" + productId)
+                .then(response => response.json())
+                .then(product => {
+                    productObject = product
+                    document.getElementById('modalProductName').textContent = product.productName;
+                    document.getElementById('modalProductDetails').textContent = product.details;
+                    document.getElementById('modalProductPrice').textContent = product.price.toString();
+                    document.getElementById('modalCreatedBy').textContent = product.createdBy;
+                    document.getElementById('modalProductImage').src = product.imageUrl;
+                    document.getElementById('modalQuantity').value = quantity;
+                    document.getElementById('cartItemId').value = cartItemId;
+                    document.getElementById('modalQuantity').setAttribute('max', product.quantity);
+                    document.getElementById('productModal').classList.add('active');
+                });
         }
         function closeProductModal() {
+            const cartItemId = document.getElementById('cartItemId').value;
+            const quantity = document.getElementById('modalQuantity').value;
+            const apiUrl = "/cart/items/" + cartItemId;
+            
+            fetch(apiUrl, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    quantity: quantity
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Cart Data:", data);
+            })
+            
+            window.location.reload(true);
             document.getElementById('productModal').classList.remove('active');
+        }
+
+        function incrementQuantity() {
+            const input = document.getElementById('modalQuantity');
+            const currentValue = parseInt(input.value) || 0;
+            if(currentValue < productObject.quantity){
+              input.value = currentValue + 1;
+            }
+        }
+
+        function decrementQuantity() {
+            const input = document.getElementById('modalQuantity');
+            const currentValue = parseInt(input.value) || 0;
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
         }
 
         (function() {

@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.wildcard.model.Cart;
 import com.example.wildcard.model.CartItem;
 import com.example.wildcard.model.Product;
 import com.example.wildcard.model.User;
+import com.example.wildcard.repository.CartRepository;
 import com.example.wildcard.service.CartItemService;
+import com.example.wildcard.service.CartService;
 import com.example.wildcard.service.ProductService;
 import com.example.wildcard.service.UserService;
 
@@ -36,6 +39,9 @@ public class RouteController {
 
     @Autowired
     private CartItemService cartItemService;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     @GetMapping("/")
     public String landingPage() {
@@ -202,20 +208,34 @@ public class RouteController {
     
 
     @GetMapping("/cart")
-    public String cartPage(Model model){
+    public String cartPage(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            String username = userDetails.getUsername();
-            
-            User currentUser = userService.findByEmail(username);
-            model.addAttribute("user", currentUser);
-            List<CartItem> cartItems = cartItemService.getItemsByCartId(currentUser.getUserId());
-            model.addAttribute("products", cartItems);
+
+        if (auth == null || !(auth.getPrincipal() instanceof UserDetails)) {
+            // Redirect to login if user is not authenticated
+            return "redirect:/login";
         }
+
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        String username = userDetails.getUsername();
+
+        try {
+            // Fetch the current user and their cart
+            User currentUser = userService.findByEmail(username);
+            Cart cart = cartRepository.findByUserUserId(currentUser.getUserId());
+            List<CartItem> cartItems = cartItemService.getItemsByCartId(cart.getCartId());
+            model.addAttribute("user", currentUser);
+            model.addAttribute("cartItems", cartItems);
+            model.addAttribute("cart", cart);
+        } catch (Exception e) {
+            model.addAttribute("error", "Unable to load cart details. Please try again later.");
+            return "error";
+        }
+
         return "cart";
     }
-    
+
+
     @GetMapping("/usermng")
     public String getUserList(Model model) {
         model.addAttribute("users", userService.findAllUsers());

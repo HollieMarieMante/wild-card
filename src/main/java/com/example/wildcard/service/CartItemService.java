@@ -13,6 +13,7 @@ public class CartItemService {
     @Autowired
     private CartItemRepository cartItemRepository;
 
+
     // Find all items in a cart
     public List<CartItem> getItemsByCartId(int cartId) {
         return cartItemRepository.findByCartCartId(cartId);

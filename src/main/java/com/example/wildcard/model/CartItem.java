@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "cart")
 public class CartItem {
 
     @Id
@@ -29,7 +31,6 @@ public class CartItem {
     @Column(nullable = false)
     private int quantity;
 
-    // Calculate subtotal for this cart item
     public float getSubtotal() {
         return product.getPrice() * quantity;
     }
